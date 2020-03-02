@@ -1,0 +1,66 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+
+    lintOptions {
+        abortOnError false;
+        tasks.lint.enabled = false
+    }
+}
+
+dependencies {
+    compileOnly fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:28+'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}
+
+
+//Copy类型
+task makeJar(type: Copy, dependsOn: ['build']) {
+    //删除存在的
+    delete 'build/libs/commonlib.jar'
+    delete '../outputJar/commonlib.jar'
+
+
+    //设置拷贝的文件
+    from('build/intermediates/bundles/release/')
+    //打进jar包后的文件目录
+    into('build/libs')
+    //将classes.jar放入build/libs/目录下
+    //include ,exclude参数来设置过滤
+    exclude "**/R.class"
+    exclude "**/R\$*.class"
+    include('classes.jar')
+    //重命名
+    rename('classes.jar', 'commonlib.jar')
+
+    from("build/libs");
+    into('../outputJar')
+}
