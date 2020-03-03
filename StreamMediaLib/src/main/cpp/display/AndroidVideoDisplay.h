@@ -37,36 +37,7 @@ using namespace StreamMedia::media;
 namespace StreamMedia {
     namespace media {
 #define GET_STR(x) #x
-        const char *vertexShaderString = GET_STR(
-                attribute vec4 aPosition;
-                attribute vec2 aTexCoord;
-                varying vec2 vTexCoord;
 
-                uniform         mat4 um4_ModelViewProjection;
-
-                void main() {
-                    vTexCoord=vec2(aTexCoord.x,1.0-aTexCoord.y);
-                    gl_Position = um4_ModelViewProjection *aPosition;
-                }
-        );
-        const char *fragmentShaderString = GET_STR(
-                precision mediump float;
-                varying vec2 vTexCoord;
-                uniform sampler2D yTexture;
-                uniform sampler2D uTexture;
-                uniform sampler2D vTexture;
-                void main() {
-                    vec3 yuv;
-                    vec3 rgb;
-                    yuv.r = texture2D(yTexture, vTexCoord).r;
-                    yuv.g = texture2D(uTexture, vTexCoord).r - 0.5;
-                    yuv.b = texture2D(vTexture, vTexCoord).r - 0.5;
-                    rgb = mat3(1.164,  1.164,  1.164,
-                               0.0,   -0.213,  2.112,
-                               1.793, -0.533,  0.0) * yuv;
-                    gl_FragColor = vec4(rgb, 1.0);
-                }
-        );
 
 #define SM_GLES2_MAX_PLANE 3
 
@@ -95,6 +66,37 @@ namespace StreamMedia {
             void parseYuvData(MediaFrameImplPtr& fMediaFrame);
         protected:
             DiaplayOpaquePtr displayOpaque;
+
+            const char *vertexShaderString = GET_STR(
+                    attribute vec4 aPosition;
+                    attribute vec2 aTexCoord;
+                    varying vec2 vTexCoord;
+
+                    uniform         mat4 um4_ModelViewProjection;
+
+                    void main() {
+                        vTexCoord=vec2(aTexCoord.x,1.0-aTexCoord.y);
+                        gl_Position = um4_ModelViewProjection *aPosition;
+                    }
+            );
+            const char *fragmentShaderString = GET_STR(
+                    precision mediump float;
+                    varying vec2 vTexCoord;
+                    uniform sampler2D yTexture;
+                    uniform sampler2D uTexture;
+                    uniform sampler2D vTexture;
+                    void main() {
+                        vec3 yuv;
+                        vec3 rgb;
+                        yuv.r = texture2D(yTexture, vTexCoord).r;
+                        yuv.g = texture2D(uTexture, vTexCoord).r - 0.5;
+                        yuv.b = texture2D(vTexture, vTexCoord).r - 0.5;
+                        rgb = mat3(1.164,  1.164,  1.164,
+                                   0.0,   -0.213,  2.112,
+                                   1.793, -0.533,  0.0) * yuv;
+                        gl_FragColor = vec4(rgb, 1.0);
+                    }
+            );
         };
         using AndroidVideoDisplayPtr = std::shared_ptr<AndroidVideoDisplay>;
 

@@ -43,6 +43,8 @@ include_directories("./src/main/StreamMediaProject/ThirdLib/ffmpeg/include")
 include_directories("./src/main/StreamMediaProject/CommonLib/include")
 include_directories("./src/main/StreamMediaProject/StreamMediaLib/include")
 include_directories("./src/main/cpp")
+include_directories("./src/main/cpp/jni")
+include_directories("D:/AndroidDev/sdk/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/include")
 
 #收集源代码
 file(GLOB Src_list
