@@ -37,6 +37,8 @@ set(CommonLibRoot ./src/main/StreamMediaProject/CommonLib/src)
 set(StreamMediaLibRoot ./src/main/StreamMediaProject/StreamMediaLib/include)
 set(StreamMediaLibRoot ./src/main/StreamMediaProject/StreamMediaLib/src)
 
+set(JniSource ./src/main/cpp)
+
 include_directories("./src/main/StreamMediaProject/ThirdLib/ffmpeg/include")
 include_directories("./src/main/StreamMediaProject/CommonLib/include")
 include_directories("./src/main/StreamMediaProject/StreamMediaLib/include")
@@ -46,6 +48,11 @@ file(GLOB Src_list
 
         ${CommonLibRoot}/*/*.cpp
         ${StreamMediaLibRoot}/*/*.cpp
+
+        ${JniSource}/*/*.cpp
+        ${JniSource}/*/*.c
+        ${JniSource}/*.cpp
+        ${JniSource}/*.c
         )
 
 add_library(StreamMediaLib SHARED ${Src_list})
