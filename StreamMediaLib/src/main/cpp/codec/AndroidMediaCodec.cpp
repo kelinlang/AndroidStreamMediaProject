@@ -137,6 +137,7 @@ void AndroidMediaDecode::start() {
                         mediaFramePtr->startPos = 0;
                         mediaFramePtr->dataLen = bufsize;
                         mediaFramePtr->pts = info.presentationTimeUs;
+                        LogT << " presentationTimeUs : "<<info.presentationTimeUs << endl;
 
                         AMediaCodec_releaseOutputBuffer(mediaCodec, bufidx, false);
 
@@ -156,10 +157,10 @@ void AndroidMediaDecode::stop() {
     {
         LogD << " close start" << endl;
         runFlag = false;
+        mediaPacketQueue.clear();
         codecThread.join();
         readThread.join();
 
-        mediaPacketQueue.clear();
         if(mediaCodec){
             AMediaCodec_stop(mediaCodec);
             mediaCodec = nullptr;

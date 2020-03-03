@@ -6,7 +6,7 @@
 #define STREAMMEDIAANDROIDLIB_ANDROIDMEDIACODEC_H
 #include <media/NdkMediaFormat.h>
 #include <media/NdkMediaCodec.h>
-
+#include <android/native_window.h>
 #include "media/media_codec.h"
 #include "ffmpeg/ffmpeg_media_format.h"
 

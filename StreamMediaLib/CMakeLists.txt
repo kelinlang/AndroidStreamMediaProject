@@ -42,6 +42,7 @@ set(JniSource ./src/main/cpp)
 include_directories("./src/main/StreamMediaProject/ThirdLib/ffmpeg/include")
 include_directories("./src/main/StreamMediaProject/CommonLib/include")
 include_directories("./src/main/StreamMediaProject/StreamMediaLib/include")
+include_directories("./src/main/cpp")
 
 #收集源代码
 file(GLOB Src_list
@@ -51,6 +52,7 @@ file(GLOB Src_list
 
         ${JniSource}/*/*.cpp
         ${JniSource}/*/*.c
+        ${JniSource}/*/*.h
         ${JniSource}/*.cpp
         ${JniSource}/*.c
         )
