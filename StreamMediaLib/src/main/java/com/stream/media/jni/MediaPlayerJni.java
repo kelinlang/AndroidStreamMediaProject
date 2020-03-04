@@ -1,4 +1,4 @@
-package com.kelinlang.stream.media.lib.jni;
+package com.stream.media.jni;
 
 import android.view.Surface;
 

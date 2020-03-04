@@ -2,8 +2,10 @@
 // Created by kelinlang on 2020/3/3.
 //
 
-#include "com_kelinlang_stream_media_lib_jni_MediaPlayerJni.h"
-#include "AndroidPlayer.h"
+#include "com_stream_media_jni_MediaPlayerJni.h"
+#include "player/AndroidPlayer.h"
+using namespace StreamMedia::media;
+
 static AndroidPlayerPtr androidPlayPtr;
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
@@ -29,24 +31,24 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
     return JNI_VERSION_1_6;
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_kelinlang_stream_media_lib_jni_MediaPlayerJni_create
+extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_create
         (JNIEnv *env, jobject object) {
-
-    androidPlayPtr= std::make_shared<AndroidPlayer>()
+    LogI<<"create"<<endl;
+    androidPlayPtr= std::make_shared<AndroidPlayer>();
 }
 
 
-extern "C" JNIEXPORT void JNICALL Java_com_kelinlang_stream_media_lib_jni_MediaPlayerJni_setVideoSurface
+extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_setVideoSurface
         (JNIEnv *env, jobject object, jobject surface) {
     LogI<<"setVideoSurface"<<endl;
     androidPlayPtr->videoDisplayPtr->displayOpaque->aNativeWindow = ANativeWindow_fromSurface(env,surface);
 }
 
 
-extern "C" JNIEXPORT void JNICALL Java_com_kelinlang_stream_media_lib_jni_MediaPlayerJni_setParam
+extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_setParam
         (JNIEnv *env, jobject object, jobject playerParam) {
     LogI<<"setParam"<<endl;
-    jclass playerParamClass = env->FindClass("com/kelinlang/stream/media/lib/jni/PlayerParam");
+    jclass playerParamClass = env->FindClass("com/stream/media/jni/PlayerParam");
 
     jfieldID  jviewWidth = env->GetFieldID(playerParamClass,"viewWidth","I");
     jfieldID  jviewHeight = env->GetFieldID(playerParamClass,"viewHeight","I");
@@ -95,28 +97,28 @@ extern "C" JNIEXPORT void JNICALL Java_com_kelinlang_stream_media_lib_jni_MediaP
     }
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_kelinlang_stream_media_lib_jni_MediaPlayerJni_init
+extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_init
         (JNIEnv *env, jobject object) {
     LogI<<"----init-----"<<endl;
     androidPlayPtr->init();
 }
 
 
-extern "C" JNIEXPORT void JNICALL Java_com_kelinlang_stream_media_lib_jni_MediaPlayerJni_release
+extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_release
         (JNIEnv *env, jobject object) {
     LogI<<"----release-----"<<endl;
     androidPlayPtr->release();
 }
 
 
-extern "C" JNIEXPORT void JNICALL Java_com_kelinlang_stream_media_lib_jni_MediaPlayerJni_start
+extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_start
         (JNIEnv *env, jobject object) {
     LogI<<"----start-----"<<endl;
     androidPlayPtr->start();
 }
 
 
-extern "C" JNIEXPORT void JNICALL Java_com_kelinlang_stream_media_lib_jni_MediaPlayerJni_stop
+extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_stop
         (JNIEnv *env, jobject object) {
     LogI<<"----stop-----"<<endl;
     androidPlayPtr->stop();
