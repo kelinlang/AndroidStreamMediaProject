@@ -1,2 +1,2 @@
-include ':app', ':Commonlib', ':StreamMediaLib'
+include ':app', ':Commonlib', ':StreamMediaLib', ':StreamMediaDemo'
 rootProject.name='StreamMediaAndroidLib'
