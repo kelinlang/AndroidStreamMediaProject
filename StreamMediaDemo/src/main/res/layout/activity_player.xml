@@ -6,6 +6,31 @@
     android:layout_height="match_parent"
     tools:context=".activity.PlayerActivity">
 
+    <com.stream.media.view.MediaPlayerView
+        android:id="@+id/media_player_sf"
+        android:layout_width="640px"
+        android:layout_height="480px"/>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+        <Button
+            android:text="开始"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onToStartPlayer"/>
+
+        <Button
+            android:text="停止 "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onToStopPlayer"/>
+
+    </LinearLayout>
 
 
 </FrameLayout>

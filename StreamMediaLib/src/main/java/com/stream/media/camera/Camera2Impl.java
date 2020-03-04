@@ -19,12 +19,14 @@ import android.media.ImageReader;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
+
 import android.util.Range;
 import android.util.Size;
 import android.view.Surface;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 
 import com.lib.commonlib.utils.DataJsonTranslation;
 import com.lib.commonlib.utils.MLog;

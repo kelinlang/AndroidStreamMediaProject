@@ -3,13 +3,15 @@ package com.stream.media.view;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
+
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+
+import androidx.annotation.RequiresApi;
 
 import com.lib.commonlib.utils.DataJsonTranslation;
 import com.lib.commonlib.utils.MLog;

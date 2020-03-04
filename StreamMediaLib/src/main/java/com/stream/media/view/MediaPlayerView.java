@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.opengl.Matrix;
 import android.os.Build;
-
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Surface;
@@ -15,15 +14,15 @@ import android.view.WindowManager;
 import androidx.annotation.RequiresApi;
 
 import com.lib.commonlib.utils.MLog;
-import com.stream.media.jni.MediaJni;
+import com.stream.media.jni.MediaPlayerJni;
 import com.stream.media.jni.PlayerParam;
 
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-public class VideoDisplayView extends SurfaceView implements SurfaceHolder.Callback{
+public class MediaPlayerView extends SurfaceView implements SurfaceHolder.Callback{
     private SurfaceHolder.Callback holdCallback;
 
-    private MediaJni mediaJni;
+    private MediaPlayerJni mediaJni;
     private PlayerParam playerParam;
 
     private float[] mViewMatrix=new float[16];
@@ -32,22 +31,22 @@ public class VideoDisplayView extends SurfaceView implements SurfaceHolder.Callb
 
     private float degree = 270.0f;
 
-    public VideoDisplayView(Context context) {
+    public MediaPlayerView(Context context) {
         super(context);
         init();
     }
 
-    public VideoDisplayView(Context context, AttributeSet attrs) {
+    public MediaPlayerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public VideoDisplayView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MediaPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
-    public VideoDisplayView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public MediaPlayerView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
@@ -57,6 +56,7 @@ public class VideoDisplayView extends SurfaceView implements SurfaceHolder.Callb
 //        initMetrix();
         playerParam = new PlayerParam();
 //        playerParam.matrix = mMVPMatrix;
+        playerParam.url = "/sdcard/E1.mp4";
     }
 
     @Override
@@ -65,10 +65,10 @@ public class VideoDisplayView extends SurfaceView implements SurfaceHolder.Callb
         MLog.d("Video display view  onAttachedToWindow");
         int angle = ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
 
-        switch (angle) {
+        /*switch (angle) {
             case Surface.ROTATION_0:
-                getLayoutParams().width = 480;
-                getLayoutParams().height = 640;
+                getLayoutParams().width = 640;
+                getLayoutParams().height = 480;
                 degree = 270.0f;
                 break;
             case Surface.ROTATION_90:
@@ -88,7 +88,7 @@ public class VideoDisplayView extends SurfaceView implements SurfaceHolder.Callb
                 break;
             default:
                 break;
-        }
+        }*/
 
 
 
@@ -107,10 +107,11 @@ public class VideoDisplayView extends SurfaceView implements SurfaceHolder.Callb
             initMetrix();
 
 
-            mediaJni.createPlayer(playerParam.id);
-            mediaJni.setVideoSurface(playerParam.id,holder.getSurface());
-            mediaJni.setPlayerParam(playerParam.id,playerParam);
-            mediaJni.startPlay(playerParam.id);
+            mediaJni.create();
+            mediaJni.setVideoSurface(holder.getSurface());
+            mediaJni.setParam(playerParam);
+            mediaJni.init();
+            mediaJni.start();
         }
 
         if (holdCallback != null){
@@ -126,7 +127,7 @@ public class VideoDisplayView extends SurfaceView implements SurfaceHolder.Callb
                 playerParam.viewWidth = width;
                 playerParam.viewHeight = height;
                 initMetrix();
-                mediaJni.setPlayerParam(playerParam.id,playerParam);
+                mediaJni.setParam(playerParam);
             }
         }
 
@@ -141,7 +142,7 @@ public class VideoDisplayView extends SurfaceView implements SurfaceHolder.Callb
     public void surfaceDestroyed(SurfaceHolder holder) {
         MLog.i("player  surfaceDestroyed");
         if (mediaJni != null && !TextUtils.isEmpty(playerParam.url)&& !TextUtils.isEmpty(playerParam.id)){
-            mediaJni.stopPlay(playerParam.id);
+            mediaJni.stop();
         }
 
         if (holdCallback != null){
@@ -235,7 +236,7 @@ public class VideoDisplayView extends SurfaceView implements SurfaceHolder.Callb
         this.holdCallback = holdCallback;
     }
 
-    public void setMediaJni(MediaJni mediaJni) {
+    public void setMediaPlayerJni(MediaPlayerJni mediaJni) {
         this.mediaJni = mediaJni;
     }
 

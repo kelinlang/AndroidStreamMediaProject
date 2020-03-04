@@ -4,8 +4,9 @@ import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 
+
+import androidx.annotation.RequiresApi;
 
 import com.lib.commonlib.utils.MLog;
 import com.stream.media.jni.MediaDataCallback;

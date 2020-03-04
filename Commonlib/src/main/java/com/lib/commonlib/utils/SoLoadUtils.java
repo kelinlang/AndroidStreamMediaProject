@@ -19,6 +19,7 @@ public class SoLoadUtils {
             try {
                 System.load(path + "/lib" + soName + ".so");
             } catch (Exception e1) {
+                e.printStackTrace();
             }
         }
     }

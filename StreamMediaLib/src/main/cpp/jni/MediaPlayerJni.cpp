@@ -27,7 +27,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
     //此处可以动态注册本地方法
 
 //    cloudVoiceLogI("---------------------JNI_OnLoad finish------------------------");
-
+    LogI<<"---------------------JNI_OnLoad finish------------------------"<<endl;
     return JNI_VERSION_1_6;
 }
 
