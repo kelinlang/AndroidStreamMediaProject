@@ -4,6 +4,10 @@
 
 #ifndef _Included_com_kelinlang_stream_media_lib_jni_MediaPlayerJni
 #define _Included_com_kelinlang_stream_media_lib_jni_MediaPlayerJni
+
+#include "player/AndroidPlayer.h"
+using namespace StreamMedia::media;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

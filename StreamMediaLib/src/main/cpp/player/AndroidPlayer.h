@@ -26,7 +26,7 @@ namespace StreamMedia{
 
         public:
             VideoDisplayParamPtr videoDisplayParamPtr ;
-            MediaSourcePtr mediaSourePtr;
+            FFmpegMediaSourcePtr mediaSourePtr;
             std::unordered_map<int, AndroidMediaDecodePtr> decodes;
             AndroidVideoDisplayPtr videoDisplayPtr;
 

@@ -64,7 +64,7 @@ namespace StreamMedia {
 
         protected:
             void parseYuvData(MediaFrameImplPtr& fMediaFrame);
-        protected:
+        public:
             DiaplayOpaquePtr displayOpaque;
 
             const char *vertexShaderString = GET_STR(
