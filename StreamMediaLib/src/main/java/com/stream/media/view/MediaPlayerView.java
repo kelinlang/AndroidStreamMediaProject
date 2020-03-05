@@ -56,7 +56,10 @@ public class MediaPlayerView extends SurfaceView implements SurfaceHolder.Callba
 //        initMetrix();
         playerParam = new PlayerParam();
 //        playerParam.matrix = mMVPMatrix;
+//        playerParam.url = "/sdcard/E1.mp4";
         playerParam.url = "/sdcard/E1.mp4";
+
+        mediaJni = new MediaPlayerJni();
     }
 
     @Override
@@ -98,7 +101,7 @@ public class MediaPlayerView extends SurfaceView implements SurfaceHolder.Callba
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         MLog.d("player surfaceCreated width : "+ getWidth()+ " , height : "+ getHeight());
-        if (mediaJni != null && !TextUtils.isEmpty(playerParam.url)&& !TextUtils.isEmpty(playerParam.id)){
+        if (mediaJni != null && !TextUtils.isEmpty(playerParam.url)){
             playerParam.videoWidth = 640;
             playerParam.videoHeight = 480;
             playerParam.viewWidth = getWidth();
@@ -122,7 +125,7 @@ public class MediaPlayerView extends SurfaceView implements SurfaceHolder.Callba
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         MLog.i("player  surfaceChanged width : "+ width+ " , height : "+ height);
-        if (mediaJni != null && !TextUtils.isEmpty(playerParam.url)&& !TextUtils.isEmpty(playerParam.id)){
+        if (mediaJni != null && !TextUtils.isEmpty(playerParam.url)){
             if(playerParam.viewHeight != height || playerParam.viewWidth != width){
                 playerParam.viewWidth = width;
                 playerParam.viewHeight = height;

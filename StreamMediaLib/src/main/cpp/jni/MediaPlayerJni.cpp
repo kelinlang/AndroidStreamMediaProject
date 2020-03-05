@@ -23,9 +23,9 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
 
     Log::getInstance()->add(std::dynamic_pointer_cast<LogChannel>(std::make_shared<ConsoleChannel>()));
     Log::getInstance()->setLevel(LogLevel::LTrace);
-    Log::getInstance()->setTag("client");
+    Log::getInstance()->setTag("StreamMedia");
     //此处可以动态注册本地方法
-
+    FFmpeg::ffmpegInit();
 //    cloudVoiceLogI("---------------------JNI_OnLoad finish------------------------");
     LogI<<"---------------------JNI_OnLoad finish------------------------"<<endl;
     return JNI_VERSION_1_6;
@@ -68,8 +68,9 @@ extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_setPa
     int videoWidth = env->GetIntField(playerParam,jvideoWidth);
     int videoHeight = env->GetIntField(playerParam,jvideoHeight);
 
-    jstring url = (jstring)env->GetObjectField(playerParam, jUrl);
-    char * urlString = (char*)env->GetStringUTFChars(url ,NULL);
+//    jstring url = (jstring)env->GetObjectField(playerParam, jUrl);
+    LogI<<"GetObjectField"<<endl;
+//    char * urlString = (char*)env->GetStringUTFChars(url , NULL);
 
     jfloatArray  dataArray = (jfloatArray)env->GetObjectField(playerParam,jMatrix);
     jfloat* buffer = env->GetFloatArrayElements(dataArray, 0);
@@ -92,7 +93,8 @@ extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_setPa
         playerParam1->matrixLen = matrixLen;
         playerParam1->matrix = matrix;
 
-        playerParam1->url = urlString;
+//        playerParam1->url = urlString;
+        playerParam1->url = "/storage/emulated/0/E1.mp4";
         androidPlayPtr->videoDisplayParamPtr = playerParam1;
     }
 }

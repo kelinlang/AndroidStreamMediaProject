@@ -15,7 +15,5 @@ public class PlayerParam {
     public float[] matrix;
     public String url;
 
-
-
     public String id;
 }

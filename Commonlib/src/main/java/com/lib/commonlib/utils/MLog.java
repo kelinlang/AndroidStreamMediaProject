@@ -9,7 +9,7 @@ public final class MLog {
 
     public static boolean enable = true;
     public static int sLevel = 5;
-    public static String logTag = "RealTimeVoice";
+    public static String logTag = "StreamMedia";
 
     public static String getLogTag() {
         return logTag;
