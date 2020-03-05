@@ -95,6 +95,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_setPa
 
 //        playerParam1->url = urlString;
         playerParam1->url = "/storage/emulated/0/E1.mp4";
+        playerParam1->url = "rtmp://192.168.1.6:1935/live/test";
         androidPlayPtr->videoDisplayParamPtr = playerParam1;
     }
 }

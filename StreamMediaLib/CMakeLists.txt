@@ -61,22 +61,24 @@ file(GLOB Src_list
 
 add_library(StreamMediaLib SHARED ${Src_list})
 
-add_library(openssl-crypto STATIC IMPORTED)
-set_target_properties(openssl-crypto
-        PROPERTIES IMPORTED_LOCATION
-        ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libcrypto.so)
+#add_library(openssl-crypto STATIC IMPORTED)
+#set_target_properties(openssl-crypto
+#        PROPERTIES IMPORTED_LOCATION
+#        ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libcrypto.so)
+#
+##添加加密工具(md5, base64, des, aes , asa) des加密 part-2
+#add_library(openssl-ssl STATIC IMPORTED)
+#set_target_properties(openssl-ssl
+#        PROPERTIES IMPORTED_LOCATION
+#        ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libssl.so)
+#
+##添加压缩库
+#add_library(z SHARED IMPORTED)
+#set_target_properties(z
+#        PROPERTIES IMPORTED_LOCATION
+#        ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libz.so)
 
-#添加加密工具(md5, base64, des, aes , asa) des加密 part-2
-add_library(openssl-ssl STATIC IMPORTED)
-set_target_properties(openssl-ssl
-        PROPERTIES IMPORTED_LOCATION
-        ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libssl.so)
 
-#添加压缩库
-add_library(z SHARED IMPORTED)
-set_target_properties(z
-        PROPERTIES IMPORTED_LOCATION
-        ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libz.so)
 #FFmpeg
 add_library(avcodec STATIC IMPORTED)
 set_target_properties(avcodec
@@ -121,11 +123,11 @@ target_link_libraries( # Specifies the target library.
         GLESv2
         EGL
 #
-        z
+        #z
         #crypto
         #ssl
-        openssl-crypto
-        openssl-ssl
+        #openssl-crypto
+        #openssl-ssl
 
         avcodec avfilter avformat avutil  swresample swscale
         )

@@ -23,7 +23,7 @@ public class LaunchActivity extends AppCompatActivity {
 //        SoLoadUtils.loadLibrary(getApplicationContext(),"StreamMediaLib");
 
         getImeiPerssion();
-        onToPlayerAcitvity(null);
+//        onToPlayerAcitvity(null);
     }
 
 
