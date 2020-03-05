@@ -14,7 +14,6 @@ void AndroidVideoDisplay::release() {
 }
 
 void AndroidVideoDisplay::start() {
-    runFlag = false;
     displayThread = std::thread([this] {
         LogI<<"display thread start"<<endl;
         if(!videoDisplayParamPtr){
@@ -146,7 +145,7 @@ void AndroidVideoDisplay::start() {
         int ret;
         LogD<<"display 2"<<endl;
         int tmpWidth,tmpHeight;
-
+        runFlag = true;
         while (runFlag) {
             if(viewWidth != videoDisplayParamPtr->viewWidth || viewHeight != videoDisplayParamPtr->viewHeight){
                 viewWidth = videoDisplayParamPtr->viewWidth;

@@ -66,6 +66,7 @@ void AndroidMediaDecode::init() {
         callbackOnError(static_cast<int>(MediaCodecErrorId::ParamInvalid), "AMediaCodec_configure error");
         return;
     }
+
     LogI<<" init success"<<endl;
     this->mediaCodec = mediaCodec;
 }
@@ -98,16 +99,17 @@ void AndroidMediaDecode::start() {
                     MediaPacketPtr mp = mediaPacketQueue.front();
                     if (mp) {
                         FFmpegMediaPacketPtr fMediaPacket = std::dynamic_pointer_cast<FFmpegMediaPacket>(mp);
-                        AndroidMediaCodecParamsPtr param = std::dynamic_pointer_cast<AndroidMediaCodecParams>(codecParams);
-                        bufidx = AMediaCodec_dequeueInputBuffer(mediaCodec,50);
-                        if (bufidx != 0) {
-                            LogE << "AMediaCodec_dequeueInputBuffer error, ret :" << bufidx << endl;
-                            callbackOnError(static_cast<int>(MediaCodecErrorId::ParamInvalid), "AMediaCodec_dequeueInputBuffer error");
-                            break;
-                        }
-                        uint8_t* buf = AMediaCodec_getInputBuffer(mediaCodec,bufidx,&bufsize);
 
-                        memcpy(buf,fMediaPacket->getAVPacket()->data,fMediaPacket->getAVPacket()->size);
+                        AndroidMediaCodecParamsPtr param = std::dynamic_pointer_cast<AndroidMediaCodecParams>(codecParams);
+                        bufidx = AMediaCodec_dequeueInputBuffer(this->mediaCodec,50);
+                        if (bufidx >= 0) {
+                            uint8_t* buf = AMediaCodec_getInputBuffer(mediaCodec,bufidx,&bufsize);
+
+                            memcpy(buf,fMediaPacket->getAVPacket()->data,fMediaPacket->getAVPacket()->size);
+
+                            AMediaCodec_queueInputBuffer(mediaCodec,bufidx,0,fMediaPacket->getAVPacket()->size,0,0);
+                        }
+
                         //LogT << "avcodec_receive_frame ret :" <<ret<< " , countFrame : "<< countFrame++ <<endl;
                     }
                 }

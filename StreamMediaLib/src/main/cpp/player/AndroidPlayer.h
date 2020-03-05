@@ -33,8 +33,12 @@ namespace StreamMedia{
 
         protected:
             MediaPacketCallback mediaPacketCallback = [this](MediaPacketPtr&& mediaPacketPtr) {
-                if(decodes.at(mediaPacketPtr->getStreamIndex())){
-                    decodes.at(mediaPacketPtr->getStreamIndex())->sendPacket(mediaPacketPtr);
+                try {
+                    if(decodes.at(mediaPacketPtr->getStreamIndex())){
+                        decodes.at(mediaPacketPtr->getStreamIndex())->sendPacket(mediaPacketPtr);
+                    }
+                }catch (std::out_of_range & error){
+
                 }
             };
             MediaFrameCallback mediaFrameCallback = [this](MediaFramePtr& mediaFramePtr) {

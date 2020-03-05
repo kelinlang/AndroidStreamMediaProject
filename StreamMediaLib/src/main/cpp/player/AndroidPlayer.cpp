@@ -27,6 +27,7 @@ void AndroidPlayer::init() {
         LogE<<"mediaSourePtr init fail"<<endl;
         return;
     }
+    mediaSourePtr->addMediaPacketCallback(mediaPacketCallback);
     MediaStreamMap mediaStreamMap = mediaSourePtr->getMediaStreamMap();
     for (auto& streamPair : mediaStreamMap) {
         FFmpegMediaStreamPtr  mediaStreamPtr = std::dynamic_pointer_cast<FFmpegMediaStream>(streamPair.second);
