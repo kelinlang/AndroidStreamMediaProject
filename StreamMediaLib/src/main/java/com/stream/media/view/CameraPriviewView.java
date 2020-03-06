@@ -112,6 +112,7 @@ public class CameraPriviewView extends SurfaceView implements SurfaceHolder.Call
             MLog.d("推流参数："+ DataJsonTranslation.objectToJson(streamParam));
             mediaJni.createPushClient(streamParam.id);
             mediaJni.setPushStreamParam(streamParam.id,streamParam);
+            mediaJni.initPush(streamParam.id);
             mediaJni.startPush(streamParam.id);
 
 

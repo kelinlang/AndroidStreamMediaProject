@@ -264,6 +264,7 @@ public class VideoEncoder {
 
                                         if (startTime == 0) {
                                             startTime = bufferInfo.presentationTimeUs / 1000;
+                                            MLog.i("startTime : "+ startTime);
                                         }
 
                                         videoData.videoData = keyframe;
@@ -273,7 +274,7 @@ public class VideoEncoder {
                                         videoData.width = videoParam.getWidth();
                                         videoData.height = videoParam.getHeight();
                                         videoData.id = "test";
-                                        videoData.timeStamp = bufferInfo.presentationTimeUs / 1000 - startTime;
+                                        videoData.timeStamp = (bufferInfo.presentationTimeUs / 1000 - startTime)/10000;
 
                                         if (dataCallback != null){
                                             dataCallback.onData(2,videoData);
@@ -298,7 +299,7 @@ public class VideoEncoder {
                                         videoData.width = videoParam.getWidth();
                                         videoData.height = videoParam.getHeight();
                                         videoData.id = "test";
-                                        videoData.timeStamp = bufferInfo.presentationTimeUs / 1000 - startTime;
+                                        videoData.timeStamp = (bufferInfo.presentationTimeUs / 1000 - startTime)/10000;
 
                                         if (dataCallback != null){
                                             dataCallback.onData(2,videoData);

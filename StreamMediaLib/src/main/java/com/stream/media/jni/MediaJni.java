@@ -26,6 +26,8 @@ public class MediaJni {
 
     public native void createPushClient(String id);
     public native void setPushStreamParam(String id,StreamParam streamParam);
+    public native void initPush(String id);
+    public native void releasePush(String id);
     public native void startPush(String id);
     public native void stopPush(String id);
     public native void sendVideoData(String id,VideoData videoData);

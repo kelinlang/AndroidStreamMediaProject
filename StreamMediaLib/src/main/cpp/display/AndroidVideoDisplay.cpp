@@ -143,7 +143,7 @@ void AndroidVideoDisplay::start() {
          * ¿ªÊ¼½âÂë
          * **/
         int ret;
-        LogD<<"display 2"<<endl;
+//        LogD<<"display 2"<<endl;
         int tmpWidth,tmpHeight;
         runFlag = true;
         while (runFlag) {
@@ -160,7 +160,7 @@ void AndroidVideoDisplay::start() {
             if (mf) {
                 MediaFrameImplPtr fMediaFrame = std::dynamic_pointer_cast<MediaFrameImpl>(mf);
 
-                LogD<<"display loop ------------ 2"<<endl;
+//                LogD<<"display loop ------------ 2"<<endl;
                 parseYuvData(fMediaFrame);
 
                 glActiveTexture(GL_TEXTURE0);

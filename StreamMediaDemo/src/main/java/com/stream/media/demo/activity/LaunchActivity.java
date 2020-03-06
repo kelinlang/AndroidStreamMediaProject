@@ -29,7 +29,7 @@ public class LaunchActivity extends AppCompatActivity {
 //        SoLoadUtils.loadLibrary(getApplicationContext(),"StreamMediaLib");
 
 //        getImeiPerssion();
-//        onToPlayerAcitvity(null);
+//
 
         if(Build.VERSION.SDK_INT >= 23){
             if (checkAndRequestPermission()){
@@ -38,6 +38,7 @@ public class LaunchActivity extends AppCompatActivity {
         }else {
 
         }
+        onToPlayerAcitvity(null);
     }
 
 

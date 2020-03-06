@@ -3,7 +3,7 @@ package com.stream.media.camera;
 import android.graphics.ImageFormat;
 
 public class CameraParam {
-    int cameraID = 0;
+    int cameraID = 1;
     int priviewWidth = 640;
     int priviewHeight = 480;
 

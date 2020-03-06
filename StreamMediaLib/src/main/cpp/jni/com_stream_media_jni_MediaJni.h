@@ -145,6 +145,22 @@ JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaJni_setPushStreamParam
 
 /*
  * Class:     com_stream_media_jni_MediaJni
+ * Method:    initPush
+ * Signature: (Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaJni_initPush
+  (JNIEnv *, jobject, jstring);
+
+/*
+ * Class:     com_stream_media_jni_MediaJni
+ * Method:    releasePush
+ * Signature: (Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaJni_releasePush
+  (JNIEnv *, jobject, jstring);
+
+/*
+ * Class:     com_stream_media_jni_MediaJni
  * Method:    startPush
  * Signature: (Ljava/lang/String;)V
  */

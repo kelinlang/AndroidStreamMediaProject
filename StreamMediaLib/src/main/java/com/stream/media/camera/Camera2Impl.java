@@ -81,7 +81,7 @@ public class Camera2Impl implements CameraInterface {
         CameraManager cameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
         try {
 
-            String cameraId = cameraManager.getCameraIdList()[0];
+            String cameraId = cameraManager.getCameraIdList()[cameraParam.getCameraID()];
 
             CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId);
             curCameraId = cameraId;

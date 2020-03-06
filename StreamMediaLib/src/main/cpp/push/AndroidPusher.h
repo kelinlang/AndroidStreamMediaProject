@@ -32,9 +32,9 @@ namespace StreamMedia{
 
 
         protected:
-            AVFormatContext* formatContext;
-            AVOutputFormat* outputFormat;
-            AVDictionary* options;
+            AVFormatContext* formatContext = nullptr;
+            AVOutputFormat* outputFormat = nullptr;
+            AVDictionary* options = nullptr;
 
             ConcurrentQueue<MediaFrameImplPtr> mediaPacketQueue;
 

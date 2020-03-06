@@ -11,7 +11,7 @@ AndroidPusher::~AndroidPusher() {
 }
 
 void AndroidPusher::init() {
-
+    openSink();
 }
 
 void AndroidPusher::release() {
@@ -39,7 +39,7 @@ void AndroidPusher::start() {
                     av_init_packet(&packet);
                     int pos = 0;
                     char startCode[4] = {0,0,0,1};
-                    switch (mp->packetFormat){
+                  /*  switch (mp->packetFormat){
                         case VideoFormat::VDIEO_FORMAT_H264:
                             av_new_packet(&packet, 4+mp->dataLen);
                             memcpy(packet.data, startCode, 4);
@@ -50,8 +50,14 @@ void AndroidPusher::start() {
                             break;
                         default:
                             break;
-                    }
+                    }*/
 
+                    av_new_packet(&packet, mp->dataLen);
+                    memcpy(packet.data , mp->data, mp->dataLen);
+
+                    if(mp->frameType == 1){
+                        packet.flags = AV_PKT_FLAG_KEY;
+                    }
                     //LogT << "1 packetStreamId : " << packet->stream_index << " , inStreamId : " << mp->getStreamIndex() << " , outStreamId : " << outStreamId << ", pts : " << packet->pts << ", dts : " << packet->dts << endl;
 
                     packet.pts = av_rescale_q_rnd(packet.pts, videoStream->time_base, videoStream->time_base, (AVRounding)(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
@@ -63,7 +69,7 @@ void AndroidPusher::start() {
                     //LogT << "2 packetStreamId : " << packet.stream_index << " , inStreamId : " << mp->getStreamIndex() << " , outStreamId : " << outStreamId << ", pts : " << packet.pts << ", dts : "<< packet->dts << endl;
 
                     ret = av_write_frame(formatContext, &packet);
-                    LogT << "av_interleaved_write_frame , ret : " << ret << endl;
+//                    LogT << "av_interleaved_write_frame , ret : " << ret << endl;
                     if (ret < 0)
                     {
                         LogE << "av_interleaved_write_frame error, ret : " << ret << endl;
@@ -76,8 +82,8 @@ void AndroidPusher::start() {
 
                     }*/
             }
+            av_write_trailer(formatContext);
         }
-        av_write_trailer(formatContext);
         closeSink();
         callbackOnStop();
         LogI << "------------------ffmpeg out thread finish---------------------" << endl;
@@ -110,6 +116,7 @@ void AndroidPusher::removeMediaSource(int sourceIndex) {
 }
 
 void AndroidPusher::openSink() {
+    LogD<<"formatContext : "<<formatContext<< endl;
     if (!formatContext && !url.empty() && !outFormat.empty()) {
         AVFormatContext *fc = NULL;
         int ret = -1;
@@ -141,8 +148,8 @@ void AndroidPusher::openSink() {
         //编码器编码的数据类型
         codecContext->codec_type = AVMEDIA_TYPE_VIDEO;
         //编码目标的视频帧大小，以像素为单位
-        //codecContext->width = width;
-       // codecContext->height = height;
+        codecContext->width = 480;
+       codecContext->height = 640;
         //codecContext->framerate = (AVRational) {fps, 1};
         //帧率的基本单位，我们用分数来表示，
         //codecContext->time_base = (AVRational) {1, fps};
@@ -165,6 +172,7 @@ void AndroidPusher::openSink() {
         videoStream = outStream;
 
         av_dump_format(fc, 1, url.data(), 1);
+        LogI<<"push url :"<< url << "  format :"<<outFormat<<endl;
         if (!(ofmt->flags & AVFMT_NOFILE))
         {
             AVDictionary* options = NULL;
@@ -191,5 +199,7 @@ void AndroidPusher::closeSink() {
 }
 
 void AndroidPusher::inputMediaPacket(MediaFrameImplPtr &mediaPacketPtr) {
-    mediaPacketQueue.pushBack(mediaPacketPtr);
+    if(runFlag){
+        mediaPacketQueue.pushBack(mediaPacketPtr);
+    }
 }
