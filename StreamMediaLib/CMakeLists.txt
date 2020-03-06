@@ -50,7 +50,9 @@ include_directories("D:/AndroidDev/sdk/ndk-bundle/toolchains/llvm/prebuilt/windo
 file(GLOB Src_list
 
         ${CommonLibRoot}/*/*.cpp
+        ${CommonLibRoot}/*/*.c
         ${StreamMediaLibRoot}/*/*.cpp
+        ${StreamMediaLibRoot}/*/*.c
 
         ${JniSource}/*/*.cpp
         ${JniSource}/*/*.c

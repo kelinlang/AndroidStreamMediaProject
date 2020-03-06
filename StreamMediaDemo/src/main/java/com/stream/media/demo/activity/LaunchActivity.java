@@ -75,6 +75,14 @@ public class LaunchActivity extends AppCompatActivity {
                     LaunchActivity.this, permissions3, 1003
             );
         }
+
+        if (!isGranted_(Manifest.permission.CAMERA)) {
+            String[] permissions3 = new String[1];
+            permissions3[0] = Manifest.permission.READ_EXTERNAL_STORAGE;
+            ActivityCompat.requestPermissions(
+                    LaunchActivity.this, permissions3, 1003
+            );
+        }
     }
 
     private boolean isGranted_(String permission) {

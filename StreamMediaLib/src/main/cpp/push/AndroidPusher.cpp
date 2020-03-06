@@ -38,14 +38,18 @@ void AndroidPusher::start() {
                     AVPacket packet;
                     av_init_packet(&packet);
                     switch (mp->packetFormat){
+                        int pos = 0;
                         case VideoFormat::VDIEO_FORMAT_H264:
-
+                            char startCode[4] = {0,0,0,1};
+                            av_new_packet(&packet, 4+mp->dataLen);
+                            memcpy(packet.data, startCode, 4);
+                            memcpy(packet.data + 4, mp->data, mp->dataLen);
                             break;
                         case VideoFormat::VDIEO_FORMAT_H264_SPS_PPS:
-
+//                            char startCode2[4] = {0,0,0,1};
+//                            av_new_packet(&packet, 4+mp->spsLen+mp->ppsLen);
                             break;
                     }
-
 
                     //LogT << "1 packetStreamId : " << packet->stream_index << " , inStreamId : " << mp->getStreamIndex() << " , outStreamId : " << outStreamId << ", pts : " << packet->pts << ", dts : " << packet->dts << endl;
 

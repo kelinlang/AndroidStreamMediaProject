@@ -4,6 +4,17 @@
 
 #include "com_stream_media_jni_MediaPlayerJni.h"
 #include "player/AndroidPlayer.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "log/cloudvoice_android_log.h"
+
+#ifdef __cplusplus
+}
+#endif
+
 using namespace StreamMedia::media;
 
 static AndroidPlayerPtr androidPlayPtr;
@@ -26,6 +37,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
     Log::getInstance()->setTag("StreamMedia");
     //此处可以动态注册本地方法
     FFmpeg::ffmpegInit();
+    LogInit();
 //    cloudVoiceLogI("---------------------JNI_OnLoad finish------------------------");
     LogI<<"---------------------JNI_OnLoad finish------------------------"<<endl;
     return JNI_VERSION_1_6;
