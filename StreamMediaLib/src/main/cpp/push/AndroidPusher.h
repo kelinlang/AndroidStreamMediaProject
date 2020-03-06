@@ -42,6 +42,8 @@ namespace StreamMedia{
 
             AVStream * videoStream;
         };
+
+        using AndroidPusherPtr = std::shared_ptr<AndroidPusher>;
     }
 }
 #endif //STREAMMEDIAANDROIDLIB_ANDROIDPUSHER_H

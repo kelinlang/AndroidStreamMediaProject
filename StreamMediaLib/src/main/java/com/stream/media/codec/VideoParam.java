@@ -16,7 +16,7 @@ public class VideoParam {
     private String mediaFormat = MediaFormat.MIMETYPE_VIDEO_AVC;
 
     /* 码率*/
-    private int bitRate = 640*480*30;
+    private int bitRate = 640*480*300;
     /* 帧率*/
     private int frameRate = 30;
 

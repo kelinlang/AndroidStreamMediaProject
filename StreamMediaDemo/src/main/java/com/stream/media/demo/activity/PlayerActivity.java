@@ -9,11 +9,12 @@ import com.stream.media.demo.R;
 import com.stream.media.jni.MediaJni;
 import com.stream.media.jni.StreamParam;
 import com.stream.media.view.CameraPriviewView;
+import com.stream.media.view.MediaPlayerView;
 import com.stream.media.view.VideoDisplayView;
 
 public class PlayerActivity extends AppCompatActivity {
     private CameraPriviewView cameraPriviewView;
-    private VideoDisplayView videoDisplayView;
+    private MediaPlayerView videoDisplayView;
     private MediaJni mediaJni = new MediaJni();
 
     @Override

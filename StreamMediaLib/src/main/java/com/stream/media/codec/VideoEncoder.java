@@ -306,38 +306,6 @@ public class VideoEncoder {
                                         break;
                                 }
 
-
-                                //新的实现开始
-                           /*     ByteBuffer outputBuffer;
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                                    outputBuffer = mediaCodec.getOutputBuffer(outputBufferIndex);
-                                }else {
-                                    outputBuffer = mediaCodec.getOutputBuffers()[outputBufferIndex];
-                                }
-                                outputBuffer.position(bufferInfo.offset);
-                                outputBuffer.limit(bufferInfo.offset + bufferInfo.size);
-                                byte[] h264Data = new byte[outputBuffer.remaining()];
-                                outputBuffer.get(h264Data);
-
-                                if (startTime == 0) {
-                                    startTime = bufferInfo.presentationTimeUs / 1000;
-                                }
-//                                        MLog.i("h264DataLen : "+ h264Data.length);
-                                videoData.videoData = h264Data;
-                                videoData.videoDataLen = h264Data.length;
-                                videoData.dataFormat = VideoConstants.VDIEO_FORMAT_H264;
-                                videoData.frameType = bufferInfo.flags == MediaCodec.BUFFER_FLAG_KEY_FRAME ? 1 :0;
-                                videoData.width = videoParam.getWidth();
-                                videoData.height = videoParam.getHeight();
-                                videoData.id = "test";
-                                videoData.timeStamp = bufferInfo.presentationTimeUs / 1000 - startTime;
-
-                                if (dataCallback != null){
-                                    dataCallback.onData(2,videoData);
-                                }*/
-                                //新的实现结束
-
-
                                 mediaCodec.releaseOutputBuffer(outputBufferIndex, false);
                             }else if (outputBufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED){
                                 MLog.i("-------------output format change---------------");
@@ -417,7 +385,7 @@ public class VideoEncoder {
                     new FileStorage("/sdcard/h264tmp.h264");
             count++;
 
-//            fileStorage.setSaveEnableFlag(true);
+            fileStorage.setSaveEnableFlag(true);
             fileStorage.open();
         }
     }

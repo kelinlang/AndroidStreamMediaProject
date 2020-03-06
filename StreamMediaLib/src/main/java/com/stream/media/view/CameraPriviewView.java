@@ -106,7 +106,7 @@ public class CameraPriviewView extends SurfaceView implements SurfaceHolder.Call
         videoParam.setWidth(getWidth());
         videoParam.setHeight(getHeight());
         videoParam.setFrameRate(30);
-        videoParam.setBitRate(640*480*30);
+        videoParam.setBitRate(640*480*300);
 
         if (mediaJni != null && !TextUtils.isEmpty(streamParam.url)&& !TextUtils.isEmpty(streamParam.id)){
             MLog.d("推流参数："+ DataJsonTranslation.objectToJson(streamParam));
