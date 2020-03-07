@@ -54,6 +54,29 @@ void AndroidPlayer::init() {
 
             decode->init();
             decodes.insert({ mediaStreamPtr->getStreamId(), std::move(decode) });
+
+        } else if(StreamType::StreamAudio == mediaStreamPtr->getStreamType()){
+            AndroidMediaDecodePtr decode = std::make_shared<AndroidMediaDecode>();
+            decode->setSourceIndex(mediaStreamPtr->sourceIndex);
+            decode->setStreamIndex(mediaStreamPtr->getStreamId());
+
+            AVCodecParameters* avCodecParameters = mediaStreamPtr->getStream()->codecpar;
+
+            AndroidMediaCodecParamsPtr codecParamsPtr = std::make_shared<AndroidMediaCodecParams>();
+            codecParamsPtr->mediaFormat = AMediaFormat_new();
+            AMediaFormat_setString(codecParamsPtr->mediaFormat, "mime", "audio/aac");
+            AMediaFormat_setInt32(codecParamsPtr->mediaFormat, AMEDIAFORMAT_KEY_CHANNEL_COUNT, avCodecParameters->channels);
+            AMediaFormat_setInt32(codecParamsPtr->mediaFormat, AMEDIAFORMAT_KEY_SAMPLE_RATE, avCodecParameters->sample_rate);
+            AMediaFormat_setInt32(codecParamsPtr->mediaFormat, AMEDIAFORMAT_KEY_AAC_PROFILE, 2);
+
+
+            LogI << "initDecode codec name : " << endl;
+
+            decode->setMediaCodecParams(std::dynamic_pointer_cast<MediaCodecParams>(codecParamsPtr));
+            decode->setMediaFrameCallback(mediaFrameCallback);
+
+            decode->init();
+            decodes.insert({ mediaStreamPtr->getStreamId(), std::move(decode) });
         }
 
 

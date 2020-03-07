@@ -10,6 +10,7 @@
 #include "ffmpeg/ffmpeg_media_source.h"
 #include "display/AndroidVideoDisplay.h"
 #include "codec/AndroidMediaCodec.h"
+#include "audio/OpenSlAudioPlay.h"
 using namespace StreamMedia::media;
 
 namespace StreamMedia{
@@ -30,6 +31,7 @@ namespace StreamMedia{
             std::unordered_map<int, AndroidMediaDecodePtr> decodes;
             AndroidVideoDisplayPtr videoDisplayPtr;
 
+            AudioPlayerPtr audioPlayerPtr ;
 
         protected:
             MediaPacketCallback mediaPacketCallback = [this](MediaPacketPtr&& mediaPacketPtr) {
@@ -43,6 +45,10 @@ namespace StreamMedia{
             };
             MediaFrameCallback mediaFrameCallback = [this](MediaFramePtr& mediaFramePtr) {
                 videoDisplayPtr->intputFrame(mediaFramePtr);
+            };
+
+            MediaFrameCallback audioFrameCallback = [this](MediaFramePtr& mediaFramePtr) {
+                audioPlayerPtr->intputFrame(mediaFramePtr);
             };
         };
         using AndroidPlayerPtr = std::shared_ptr<AndroidPlayer>;
