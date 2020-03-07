@@ -75,6 +75,7 @@ void AndroidPusher::start() {
                         LogE << "av_interleaved_write_frame error, ret : " << ret << endl;
                         break;
                     }
+                    av_packet_unref(&packet);
                 }
                 /*	if (mp && (packet = mp->getAVPacket())
                         && sourceStreamInOutMap.find(mp->getSourceIndex()) != sourceStreamInOutMap.end())
