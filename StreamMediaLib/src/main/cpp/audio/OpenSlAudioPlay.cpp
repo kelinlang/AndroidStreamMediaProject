@@ -52,7 +52,8 @@ void AudioPlayer::init() {
     const SLInterfaceID ids[3] = {SL_IID_BUFFERQUEUE, SL_IID_EFFECTSEND, SL_IID_VOLUME};
     const SLboolean req[3] = {SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE};
 
-    result = (*engineEngine)->CreateAudioPlayer(engineEngine, &pcmPlayerObject, &slDataSource, &audioSnk, 3, ids, req);
+    result = (*engineEngine)->CreateAudioPlayer(engineEngine, &pcmPlayerObject,
+            &slDataSource, &audioSnk, 3, ids, req);
     //³õÊ¼»¯²¥·ÅÆ÷
     (*pcmPlayerObject)->Realize(pcmPlayerObject, SL_BOOLEAN_FALSE);
 
@@ -120,7 +121,7 @@ void AudioPlayer::intputFrame(MediaFramePtr &mediaFramePtr) {
 }
 
 void AudioPlayer::pcmBufferCallBack(SLAndroidSimpleBufferQueueItf bf, void *context) {
-//    LogT<<"--------pcmBufferCallBack------1----" <<endl;
+    LogT<<"--------pcmBufferCallBack------1----" <<endl;
     AudioPlayer * audioPlayer = static_cast<AudioPlayer*>(context);
 
     MediaFramePtr mf = audioPlayer->mediaFrameQueue.front();

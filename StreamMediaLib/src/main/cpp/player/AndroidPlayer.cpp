@@ -107,6 +107,9 @@ void AndroidPlayer::start() {
     if(audioDecode){
         audioDecode->start();
     }
+    if(audioPlayerPtr){
+        audioPlayerPtr->init();
+    }
 }
 
 void AndroidPlayer::stop() {

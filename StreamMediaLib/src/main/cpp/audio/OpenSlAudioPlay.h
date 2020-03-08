@@ -8,6 +8,7 @@
 #include <SLES/OpenSLES_Android.h>
 #include "ffmpeg/ffmpeg_media_format.h"
 #include "log/log.h"
+#include "container/PcmQueue.h"
 
 using namespace CommonLib;
 using namespace StreamMedia::media;
@@ -35,14 +36,14 @@ namespace StreamMedia {
             bool runFlag = false;
             std::thread displayThread;
 
-            ConcurrentQueue<MediaFramePtr> mediaFrameQueue;
+            ConcurrentQueuePcm<MediaFramePtr> mediaFrameQueue;
 
 
-            // ÒýÇæ½Ó¿Ú
+            // ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½
             SLObjectItf engineObject = NULL;
             SLEngineItf engineEngine = NULL;
 
-            //»ìÒôÆ÷
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             SLObjectItf outputMixObject = NULL;
             SLEnvironmentalReverbItf outputMixEnvironmentalReverb = NULL;
             SLEnvironmentalReverbSettings reverbSettings = SL_I3DL2_ENVIRONMENT_PRESET_STONECORRIDOR;
@@ -52,7 +53,7 @@ namespace StreamMedia {
             SLPlayItf pcmPlayerPlay = NULL;
             SLVolumeItf pcmPlayerVolume = NULL;
 
-//»º³åÆ÷¶ÓÁÐ½Ó¿Ú
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð½Ó¿ï¿½
             SLAndroidSimpleBufferQueueItf pcmBufferQueue;
 
 

@@ -52,8 +52,8 @@ namespace StreamMedia {
             unsigned int confLen = 2;
 
             HANDLE_AACDECODER		handle = nullptr;
-            INT_PCM					outputBuffer[2*2048];
-            int 					outputBufferSize = 2*2048;
+            INT_PCM					outputBuffer[2048 * sizeof(INT_PCM)*8];
+            int 					outputBufferSize = 2048 * sizeof(INT_PCM)*8;
         };
         using  FdkAacMediaDecodePtr = std::shared_ptr< FdkAacMediaDecode>;
     }
