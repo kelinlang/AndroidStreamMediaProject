@@ -64,7 +64,7 @@ void AudioPlayer::init() {
 
 
     //缓冲接口回调
-    (*pcmBufferQueue)->RegisterCallback(pcmBufferQueue, pcmBufferCallBack, NULL);
+    (*pcmBufferQueue)->RegisterCallback(pcmBufferQueue, pcmBufferCallBack, this);
 //    获取音量接口
     (*pcmPlayerObject)->GetInterface(pcmPlayerObject, SL_IID_VOLUME, &pcmPlayerVolume);
 
@@ -73,7 +73,9 @@ void AudioPlayer::init() {
 
 //    主动调用回调函数开始工作
     runFlag = true;
-    pcmBufferCallBack(pcmBufferQueue, NULL);
+    pcmBufferCallBack(pcmBufferQueue, this);
+
+    LogT<<"--------init success----------" <<endl;
 }
 
 void AudioPlayer::start() {
@@ -114,10 +116,14 @@ void AudioPlayer::intputFrame(MediaFramePtr &mediaFramePtr) {
 }
 
 void AudioPlayer::pcmBufferCallBack(SLAndroidSimpleBufferQueueItf bf, void *context) {
-    MediaFramePtr mf = mediaFrameQueue.front();
-    if (mf && runFlag) {
+    AudioPlayer * audioPlayer = static_cast<AudioPlayer*>(context);
+    MediaFramePtr mf = audioPlayer->mediaFrameQueue.front();
+    if (mf && audioPlayer->runFlag) {
         MediaFrameImplPtr fMediaFrame = std::dynamic_pointer_cast<MediaFrameImpl>(mf);
-        (*pcmBufferQueue)->Enqueue(pcmBufferQueue, fMediaFrame->data, fMediaFrame->dataLen);
+
+        LogT<<"--------pcmBufferCallBack----------" <<endl;
+
+        (*audioPlayer->pcmBufferQueue)->Enqueue(audioPlayer->pcmBufferQueue, fMediaFrame->data, fMediaFrame->dataLen);
         fMediaFrame->data = nullptr;
         fMediaFrame->dataLen = 0;
     }

@@ -29,7 +29,7 @@ namespace StreamMedia {
 
         protected:
 
-            void pcmBufferCallBack(SLAndroidSimpleBufferQueueItf bf, void * context);
+            static void pcmBufferCallBack(SLAndroidSimpleBufferQueueItf bf, void * context);
         protected:
             std::mutex mtx;
             bool runFlag = false;
@@ -54,6 +54,7 @@ namespace StreamMedia {
 
 //缓冲器队列接口
             SLAndroidSimpleBufferQueueItf pcmBufferQueue;
+
 
         };
         using AudioPlayerPtr = std::shared_ptr<AudioPlayer>;
