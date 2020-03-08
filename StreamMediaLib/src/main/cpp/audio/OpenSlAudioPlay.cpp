@@ -73,7 +73,7 @@ void AudioPlayer::init() {
 
 //    主动调用回调函数开始工作
     runFlag = true;
-    pcmBufferCallBack(pcmBufferQueue, this);
+//    pcmBufferCallBack(pcmBufferQueue, this);
 
     LogT<<"--------init success----------" <<endl;
 }

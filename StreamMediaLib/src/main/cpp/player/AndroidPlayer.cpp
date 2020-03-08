@@ -6,6 +6,7 @@
 AndroidPlayer::AndroidPlayer() {
     mediaSourePtr = std::make_shared<FFmpegMediaSource>();
     videoDisplayPtr = std::make_shared<AndroidVideoDisplay>();
+    audioPlayerPtr = std::make_shared<AudioPlayer>();
 }
 
 
@@ -32,7 +33,7 @@ void AndroidPlayer::init() {
     for (auto& streamPair : mediaStreamMap) {
         FFmpegMediaStreamPtr  mediaStreamPtr = std::dynamic_pointer_cast<FFmpegMediaStream>(streamPair.second);
         if(StreamType::StreamVideo == mediaStreamPtr->getStreamType()){
-            continue;//∆¡±Œ ”∆µΩ‚¬Î
+//            continue;//∆¡±Œ ”∆µΩ‚¬Î
 
             AndroidMediaDecodePtr decode = std::make_shared<AndroidMediaDecode>();
             decode->setSourceIndex(mediaStreamPtr->sourceIndex);
@@ -57,12 +58,13 @@ void AndroidPlayer::init() {
             decodes.insert({ mediaStreamPtr->getStreamId(), std::move(decode) });
 
         } else if(StreamType::StreamAudio == mediaStreamPtr->getStreamType()){
-            AndroidMediaDecodePtr decode = std::make_shared<AndroidMediaDecode>();
-            decode->setSourceIndex(mediaStreamPtr->sourceIndex);
-            decode->setStreamIndex(mediaStreamPtr->getStreamId());
 
             AVCodecParameters* avCodecParameters = mediaStreamPtr->getStream()->codecpar;
 
+            //Android mediaCodec Ω‚¬Î
+          /*  AndroidMediaDecodePtr decode = std::make_shared<AndroidMediaDecode>();
+            decode->setSourceIndex(mediaStreamPtr->sourceIndex);
+            decode->setStreamIndex(mediaStreamPtr->getStreamId());
             AndroidMediaCodecParamsPtr codecParamsPtr = std::make_shared<AndroidMediaCodecParams>();
             codecParamsPtr->mediaFormat = AMediaFormat_new();
             AMediaFormat_setString(codecParamsPtr->mediaFormat, "mime", "audio/mp4a-latm");
@@ -71,20 +73,28 @@ void AndroidPlayer::init() {
             AMediaFormat_setInt32(codecParamsPtr->mediaFormat, AMEDIAFORMAT_KEY_AAC_PROFILE, 1);
             AMediaFormat_setInt32(codecParamsPtr->mediaFormat, AMEDIAFORMAT_KEY_MAX_INPUT_SIZE, 16384);
             AMediaFormat_setInt32(codecParamsPtr->mediaFormat, AMEDIAFORMAT_KEY_IS_ADTS, 1);
+             decode->setMediaCodecParams(std::dynamic_pointer_cast<MediaCodecParams>(codecParamsPtr));
+            */
 
 
+            FdkAacMediaDecodePtr decode = std::make_shared<FdkAacMediaDecode>();
+            decode->conf = (uint8_t*)malloc(mediaStreamPtr->getStream()->codec->extradata_size);
+            memcpy(decode->conf,mediaStreamPtr->getStream()->codec->extradata,mediaStreamPtr->getStream()->codec->extradata_size);
             LogI << "initDecode aac decode name : " << endl;
 
-            decode->setMediaCodecParams(std::dynamic_pointer_cast<MediaCodecParams>(codecParamsPtr));
+
             decode->setMediaFrameCallback(audioFrameCallback);
 
             decode->init();
-            decodes.insert({ mediaStreamPtr->getStreamId(), std::move(decode) });
+            audioDecode = decode;
+//            decodes.insert({ mediaStreamPtr->getStreamId(), std::move(decode) });
         }
 
 
         videoDisplayPtr->setVideoDisplayParam(videoDisplayParamPtr);
         videoDisplayPtr->init();
+
+        audioPlayerPtr->init();
     }
 }
 
@@ -94,6 +104,9 @@ void AndroidPlayer::start() {
         decode.second->start();
     }
     mediaSourePtr->start();
+    if(audioDecode){
+        audioDecode->start();
+    }
 }
 
 void AndroidPlayer::stop() {
