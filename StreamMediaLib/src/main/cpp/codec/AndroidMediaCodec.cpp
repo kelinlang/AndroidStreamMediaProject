@@ -104,7 +104,7 @@ void AndroidMediaDecode::start() {
                         bufidx = AMediaCodec_dequeueInputBuffer(this->mediaCodec,2000);
                         if (bufidx >= 0) {
                             uint8_t* buf = AMediaCodec_getInputBuffer(mediaCodec,bufidx,&bufsize);
-                            LogT << "decode input thread   , bufidx : "<< bufidx <<", data size : "<<fMediaPacket->getAVPacket()->size<<endl;
+//                            LogT << "decode input thread   , bufidx : "<< bufidx <<", data size : "<<fMediaPacket->getAVPacket()->size<<endl;
                           /*  uint8_t data[7] ;
                             int pos = 0;
                             data[pos++] = 0xFF;
@@ -143,7 +143,7 @@ void AndroidMediaDecode::start() {
                 {
                     bufidx = AMediaCodec_dequeueOutputBuffer(mediaCodec,&info,2000);
                     if(bufidx >= 0) {
-                        LogT << "decode read thread   , bufidx : "<< bufidx <<endl;
+//                        LogT << "decode read thread   , bufidx : "<< bufidx <<endl;
 
                         uint8_t *buf = AMediaCodec_getOutputBuffer(mediaCodec, bufidx, &bufsize);
                         uint8_t *data =  (uint8_t*)malloc(bufsize);

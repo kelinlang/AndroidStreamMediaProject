@@ -106,13 +106,14 @@ void FdkAacMediaDecode::start() {
                     }
 
                     CStreamInfo *info = aacDecoder_GetStreamInfo(handle);
-                    LogI<<"channels"<<info->numChannels<<endl;
+                 /*   LogI<<"channels"<<info->numChannels<<endl;
                     LogI<<"sampleRate"<<info->sampleRate<<endl;
                     LogI<<"frameSize"<<info->frameSize<<endl;
                     LogI<<"decsize"<<outputBufferSize<<endl;
-                    LogI<<"decdata"<<outputBuffer[0]<<endl;
+                    LogI<<"decdata"<<outputBuffer[0]<<endl;*/
 
                     uint8_t *data =  (uint8_t*)malloc(info->frameSize*2);
+                    memcpy(data,outputBuffer,info->frameSize);
 
                     MediaFrameImplPtr mediaFramePtr = std::make_shared<MediaFrameImpl>();
 

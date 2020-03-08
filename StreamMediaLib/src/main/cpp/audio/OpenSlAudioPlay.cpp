@@ -40,7 +40,7 @@ void AudioPlayer::init() {
     SLDataFormat_PCM pcm={
             SL_DATAFORMAT_PCM,//播放pcm格式的数据
             2,//2个声道（立体声）
-            SL_SAMPLINGRATE_44_1,//44100hz的频率
+            SL_SAMPLINGRATE_48,//44100hz的频率
             SL_PCMSAMPLEFORMAT_FIXED_16,//位数 16位
             SL_PCMSAMPLEFORMAT_FIXED_16,//和位数一致就行
             SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,//立体声（前左前右）
@@ -73,6 +73,9 @@ void AudioPlayer::init() {
 
 //    主动调用回调函数开始工作
     runFlag = true;
+
+    uint8_t * data = (uint8_t *)malloc(1024);
+    (*pcmBufferQueue)->Enqueue(pcmBufferQueue, data, 1024);
 //    pcmBufferCallBack(pcmBufferQueue, this);
 
     LogT<<"--------init success----------" <<endl;
@@ -111,20 +114,28 @@ void AudioPlayer::release() {
 
 void AudioPlayer::intputFrame(MediaFramePtr &mediaFramePtr) {
     if(runFlag){
+//        LogT<<"--------intputFrame------1----" <<endl;
         mediaFrameQueue.pushBack(mediaFramePtr);
     }
 }
 
 void AudioPlayer::pcmBufferCallBack(SLAndroidSimpleBufferQueueItf bf, void *context) {
+//    LogT<<"--------pcmBufferCallBack------1----" <<endl;
     AudioPlayer * audioPlayer = static_cast<AudioPlayer*>(context);
+
     MediaFramePtr mf = audioPlayer->mediaFrameQueue.front();
+    while (!mf){
+        mf = audioPlayer->mediaFrameQueue.front();
+    }
+
     if (mf && audioPlayer->runFlag) {
         MediaFrameImplPtr fMediaFrame = std::dynamic_pointer_cast<MediaFrameImpl>(mf);
 
-        LogT<<"--------pcmBufferCallBack----------" <<endl;
-
-        (*audioPlayer->pcmBufferQueue)->Enqueue(audioPlayer->pcmBufferQueue, fMediaFrame->data, fMediaFrame->dataLen);
-        fMediaFrame->data = nullptr;
-        fMediaFrame->dataLen = 0;
+        LogT<<"--------pcmBufferCallBack----------dataLen : "<<fMediaFrame->dataLen <<endl;
+        uint8_t * data = (uint8_t *)malloc(fMediaFrame->dataLen);
+        memcpy(data,fMediaFrame->data, fMediaFrame->dataLen);
+        (*audioPlayer->pcmBufferQueue)->Enqueue(audioPlayer->pcmBufferQueue, data, fMediaFrame->dataLen);
+//        fMediaFrame->data = nullptr;
+//        fMediaFrame->dataLen = 0;
     }
 }
