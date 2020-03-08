@@ -7,6 +7,7 @@
 #include "media/media_codec.h"
 #include "ffmpeg/ffmpeg_media_format.h"
 #include "fdk-aac/aacdecoder_lib.h"
+#include "container/file_saver.h"
 
 using namespace CommonLib;
 using namespace StreamMedia::media;
@@ -54,6 +55,8 @@ namespace StreamMedia {
             HANDLE_AACDECODER		handle = nullptr;
             INT_PCM					outputBuffer[2048 * sizeof(INT_PCM)*8];
             int 					outputBufferSize = 2048 * sizeof(INT_PCM)*8;
+
+            FileSaver fileSaver;
         };
         using  FdkAacMediaDecodePtr = std::shared_ptr< FdkAacMediaDecode>;
     }

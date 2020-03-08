@@ -76,7 +76,10 @@ void FdkAacMediaDecode::start() {
     if(handle){
         LogI<<" -------------------------FdkAacMediaDecode success-----------------"<<endl;
         runFlag = true;
+
         codecThread = std::thread([this] {
+            fileSaver.open();
+
             int ret;
             int countFrame = 0;
 
@@ -111,9 +114,11 @@ void FdkAacMediaDecode::start() {
                     LogI<<"frameSize"<<info->frameSize<<endl;
                     LogI<<"decsize"<<outputBufferSize<<endl;
                     LogI<<"decdata"<<outputBuffer[0]<<endl;*/
+                    int size = info->frameSize*2;
+                    uint8_t *data =  (uint8_t*)malloc(size);
+                    memcpy(data,outputBuffer,size);
 
-                    uint8_t *data =  (uint8_t*)malloc(info->frameSize*2);
-                    memcpy(data,outputBuffer,info->frameSize);
+                    fileSaver.write(data,size);
 
                     MediaFrameImplPtr mediaFramePtr = std::make_shared<MediaFrameImpl>();
 
@@ -121,13 +126,14 @@ void FdkAacMediaDecode::start() {
                     mediaFramePtr->streamIndex = getStreamIndex();
                     mediaFramePtr->data = data;
                     mediaFramePtr->startPos = 0;
-                    mediaFramePtr->dataLen = info->frameSize*2;
+                    mediaFramePtr->dataLen = size;
                     mediaFramePtr->pts = 0;
 
                     MediaFramePtr mf = std::dynamic_pointer_cast<MediaFrame>(mediaFramePtr);
                     callbackMediaFrame(mf);
                 }
             }
+            fileSaver.close();
 
             callbackOnStop();
             LogI << "FdkAacMediaDecode finish" << endl;

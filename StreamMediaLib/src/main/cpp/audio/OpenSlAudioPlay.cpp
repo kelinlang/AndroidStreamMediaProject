@@ -121,7 +121,7 @@ void AudioPlayer::intputFrame(MediaFramePtr &mediaFramePtr) {
 }
 
 void AudioPlayer::pcmBufferCallBack(SLAndroidSimpleBufferQueueItf bf, void *context) {
-    LogT<<"--------pcmBufferCallBack------1----" <<endl;
+//    LogT<<"--------pcmBufferCallBack------1----" <<endl;
     AudioPlayer * audioPlayer = static_cast<AudioPlayer*>(context);
 
     MediaFramePtr mf = audioPlayer->mediaFrameQueue.front();
@@ -132,7 +132,7 @@ void AudioPlayer::pcmBufferCallBack(SLAndroidSimpleBufferQueueItf bf, void *cont
     if (mf && audioPlayer->runFlag) {
         MediaFrameImplPtr fMediaFrame = std::dynamic_pointer_cast<MediaFrameImpl>(mf);
 
-        LogT<<"--------pcmBufferCallBack----------dataLen : "<<fMediaFrame->dataLen <<endl;
+//        LogT<<"--------pcmBufferCallBack----------dataLen : "<<fMediaFrame->dataLen <<endl;
         uint8_t * data = (uint8_t *)malloc(fMediaFrame->dataLen);
         memcpy(data,fMediaFrame->data, fMediaFrame->dataLen);
         (*audioPlayer->pcmBufferQueue)->Enqueue(audioPlayer->pcmBufferQueue, data, fMediaFrame->dataLen);
