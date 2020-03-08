@@ -30,6 +30,7 @@ find_library( # Sets the name of the path variable.
 #设置工程源码根目录
 
 set(FFmpegHeader ./src/main/StreamMediaProject/ThirdLib/ffmpeg/include)
+set(Fdk-aac-Header ./src/main/StreamMediaProject/ThirdLib/ffmpeg/fdk-aac)
 
 set(CommonLibHeader ./src/main/StreamMediaProject/CommonLib/include)
 set(CommonLibRoot ./src/main/StreamMediaProject/CommonLib/src)
@@ -40,6 +41,7 @@ set(StreamMediaLibRoot ./src/main/StreamMediaProject/StreamMediaLib/src)
 set(JniSource ./src/main/cpp)
 
 include_directories("./src/main/StreamMediaProject/ThirdLib/ffmpeg/include")
+include_directories("Fdk-aac-Header")
 include_directories("./src/main/StreamMediaProject/CommonLib/include")
 include_directories("./src/main/StreamMediaProject/StreamMediaLib/include")
 include_directories("./src/main/cpp")
@@ -112,6 +114,11 @@ set_target_properties(swscale
         PROPERTIES IMPORTED_LOCATION
         ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libswscale.so)
 
+add_library(fdk-aac SHARED IMPORTED)
+set_target_properties(fdk-aac
+        PROPERTIES IMPORTED_LOCATION
+        ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libfdk-aac.so)
+
 target_link_libraries( # Specifies the target library.
         StreamMediaLib
 
@@ -132,4 +139,5 @@ target_link_libraries( # Specifies the target library.
         #openssl-ssl
 
         avcodec avfilter avformat avutil  swresample swscale
+        fdk-aac
         )
