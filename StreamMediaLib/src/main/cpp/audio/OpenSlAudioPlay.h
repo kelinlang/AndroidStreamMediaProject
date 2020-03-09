@@ -9,6 +9,9 @@
 #include "ffmpeg/ffmpeg_media_format.h"
 #include "log/log.h"
 #include "container/PcmQueue.h"
+#include "container/file_saver.h"
+#include "container/xspsc_queue.h"
+#include "buf_manager.h"
 
 
 using namespace CommonLib;
@@ -17,6 +20,8 @@ using namespace StreamMedia::media;
 
 namespace StreamMedia {
     namespace media {
+        using x_int_queue_t = x_spsc_queue_t<MediaFrameImplPtr, 8 >;
+
         class AudioPlayer{
         public:
             AudioPlayer();
@@ -57,7 +62,11 @@ namespace StreamMedia {
 //���������нӿ�
             SLAndroidSimpleBufferQueueItf pcmBufferQueue;
 
+            FileSaver fileSaver;
 
+            x_int_queue_t pcmQueue;
+
+            long gop = 0;
         };
         using AudioPlayerPtr = std::shared_ptr<AudioPlayer>;
     }

@@ -56,7 +56,7 @@ namespace StreamMedia {
             INT_PCM					outputBuffer[2048 * sizeof(INT_PCM)*8];
             int 					outputBufferSize = 2048 * sizeof(INT_PCM)*8;
 
-            FileSaver fileSaver;
+//            FileSaver fileSaver;
         };
         using  FdkAacMediaDecodePtr = std::shared_ptr< FdkAacMediaDecode>;
     }
