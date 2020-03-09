@@ -109,12 +109,12 @@ void FdkAacMediaDecode::start() {
                     }
 
                     CStreamInfo *info = aacDecoder_GetStreamInfo(handle);
-                 /*   LogI<<"channels"<<info->numChannels<<endl;
+                    LogI<<"channels"<<info->numChannels<<endl;
                     LogI<<"sampleRate"<<info->sampleRate<<endl;
                     LogI<<"frameSize"<<info->frameSize<<endl;
                     LogI<<"decsize"<<outputBufferSize<<endl;
-                    LogI<<"decdata"<<outputBuffer[0]<<endl;*/
-                    int size = info->frameSize*2;
+                    LogI<<"decdata"<<outputBuffer[0]<<endl;
+                    int size = info->frameSize*2*2;//  1024*2(声道数)*2(采样字节数)
                     uint8_t *data =  (uint8_t*)malloc(size);
                     memcpy(data,outputBuffer,size);
 
