@@ -105,7 +105,12 @@ void GlWrapper::draw(uint8_t *yuvData) {
 
     glViewport(left, top, viewWidth, viewHeight);
     checkGlError("glViewport");
-    LogD<<"3 left : "<<left<<" ,top : "<<top<<" , viewWidth : "<<viewWidth<<" ,viewHeight :  "<<viewHeight<<endl;
+
+    /***
+    * 纹理更新完成后开始绘制
+    ***/
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+    checkGlError("glClear");
 
     glUseProgram(programId);
     glEnableVertexAttribArray(aPositionHandle);
@@ -124,7 +129,9 @@ void GlWrapper::draw(uint8_t *yuvData) {
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glUniform1i(textureSamplerHandleY,0);
-
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE,
+                 videoWidth,videoHeight,
+                 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, pixelsY);
 
     glGenTextures(1,&uTextureId);
     glActiveTexture(GL_TEXTURE1);
@@ -132,6 +139,10 @@ void GlWrapper::draw(uint8_t *yuvData) {
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glUniform1i(textureSamplerHandleU,1);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE,
+                 videoWidth/2, videoHeight/2,
+                 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, pixelsU);
+
 
     glGenTextures(1,&vTextureId);
     glActiveTexture(GL_TEXTURE2);
@@ -139,38 +150,16 @@ void GlWrapper::draw(uint8_t *yuvData) {
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glUniform1i(textureSamplerHandleV,2);
-
-
-    glUniformMatrix4fv(um4_mvp, 1, GL_FALSE, matrix);
-
-
-
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, yTextureId);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE,
-                 videoWidth,videoHeight,
-                 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, pixelsY);
-
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, uTextureId);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE,
-                 videoWidth/2, videoHeight/2,
-                 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, pixelsU);
-
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, vTextureId);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE,
                  videoWidth/2, videoHeight/2,
                  0, GL_LUMINANCE, GL_UNSIGNED_BYTE, pixelsV);
 
-    /***
-    * 纹理更新完成后开始绘制
-    ***/
-    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-    checkGlError("glClear");
+    glUniformMatrix4fv(um4_mvp, 1, GL_FALSE, matrix);
+
+
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     checkGlError("glDrawArrays");
+
     eglSwapBuffers(eglDisp, eglWindow);
 }
 
