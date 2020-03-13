@@ -52,7 +52,7 @@ namespace StreamMedia {
             void release();
             void draw(uint8_t * yuvData);
 
-        protected:
+        public:
             void parseYuvData(uint8_t * yuvData);
 
             void checkEglError(const char *op, EGLBoolean returnVal);
@@ -74,6 +74,8 @@ namespace StreamMedia {
             int viewHeight;
             float *matrix;
 
+
+
             EGLConfig eglConf;
             EGLSurface eglWindow;
             EGLContext eglCtx;
@@ -81,6 +83,13 @@ namespace StreamMedia {
             EGLDisplay eglDisp;
 
             GLuint programId;
+
+            GLuint aPositionHandle;
+            GLuint aTextureCoordHandle;
+
+            GLuint textureSamplerHandleY;
+            GLuint textureSamplerHandleU;
+            GLuint textureSamplerHandleV;
             /***
             * 初始化空的yuv纹理
             ***/
@@ -120,6 +129,19 @@ namespace StreamMedia {
                         gl_FragColor = vec4(rgb, 1.0);
                     }
             );
+
+            float vertexData[12]= {
+                    1.0f, -1.0f, 0.0f,
+                    -1.0f, -1.0f, 0.0f,
+                    1.0f, 1.0f, 0.0f,
+                    -1.0f, 1.0f, 0.0f
+            };
+            float textureVertexData[8]={
+                    1.0f, 0.0f,//右下
+                    0.0f, 0.0f,//左下
+                    1.0f, 1.0f,//右上
+                    0.0f, 1.0f//左上
+            };
         };
 
         class AndroidVideoDisplay :public  VideoDisplay{

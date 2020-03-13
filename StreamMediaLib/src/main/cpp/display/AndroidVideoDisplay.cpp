@@ -5,7 +5,27 @@
 #include "AndroidVideoDisplay.h"
 
 GlWrapper::GlWrapper() {
-
+   /* vertexData[0] = 1.0f;
+    vertexData[1] = -1.0f;
+    vertexData[2] = 0.0f;
+    vertexData[3] = -1.0f;
+    vertexData[4] = -1.0f;
+    vertexData[5] = 0.0f;
+    vertexData[6] = 1.0f;
+    vertexData[7] = 1.0f;
+    vertexData[8] = 1.0f;
+    float vertexData[9]= {
+            1.0f, -1.0f, 0.0f,
+            -1.0f, -1.0f, 0.0f,
+            1.0f, 1.0f, 0.0f,
+            -1.0f, 1.0f, 0.0f
+    };
+    float textureVertexData[8]={
+            1.0f, 0.0f,//右下
+            0.0f, 0.0f,//左下
+            1.0f, 1.0f,//右上
+            0.0f, 1.0f//左上
+    };*/
 }
 
 GlWrapper::~GlWrapper() {
@@ -28,28 +48,6 @@ int GlWrapper::init() {
                             EGL_GREEN_SIZE, 8,
                             EGL_BLUE_SIZE, 8,
                             EGL_SURFACE_TYPE, EGL_WINDOW_BIT, EGL_NONE };
-    /**
-      * 设置opengl 要在egl初始化后进行
-      * **/
-    float vertexData[] = {
-            1.0f, -1.0f, 0.0f,
-            -1.0f, -1.0f, 0.0f,
-            1.0f, 1.0f, 0.0f,
-            -1.0f, 1.0f, 0.0f
-    };
-
-    float textureVertexData[] ={
-            1.0f, 0.0f,//右下
-            0.0f, 0.0f,//左下
-            1.0f, 1.0f,//右上
-            0.0f, 1.0f//左上
-    };
-
-    const GLfloat g_bt709[] = {
-            1.164,  1.164,  1.164,
-            0.0,   -0.213,  2.112,
-            1.793, -0.533,  0.0,
-    };
 
 
     eglDisp = eglGetDisplay(EGL_DEFAULT_DISPLAY);
@@ -78,15 +76,32 @@ int GlWrapper::init() {
 
     programId = ShaderUtils::createProgram(vertexShaderString,fragmentShaderString );
 
-    GLuint aPositionHandle = (GLuint) glGetAttribLocation(programId, "aPosition");
-    GLuint aTextureCoordHandle = (GLuint) glGetAttribLocation(programId, "aTexCoord");
+    aPositionHandle = (GLuint) glGetAttribLocation(programId, "aPosition");
+    aTextureCoordHandle = (GLuint) glGetAttribLocation(programId, "aTexCoord");
 
-    GLuint textureSamplerHandleY = (GLuint) glGetUniformLocation(programId, "yTexture");
-    GLuint textureSamplerHandleU = (GLuint) glGetUniformLocation(programId, "uTexture");
-    GLuint textureSamplerHandleV = (GLuint) glGetUniformLocation(programId, "vTexture");
+    textureSamplerHandleY = (GLuint) glGetUniformLocation(programId, "yTexture");
+    textureSamplerHandleU = (GLuint) glGetUniformLocation(programId, "uTexture");
+    textureSamplerHandleV = (GLuint) glGetUniformLocation(programId, "vTexture");
     um4_mvp = glGetUniformLocation(programId,"um4_ModelViewProjection");
 
+    return 0;
+}
 
+void GlWrapper::release() {
+    LogD<<"display 3"<<endl;
+    eglMakeCurrent(eglDisp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    eglDestroyContext(eglDisp, eglCtx);
+    eglDestroySurface(eglDisp, eglWindow);
+    eglTerminate(eglDisp);
+    eglDisp = EGL_NO_DISPLAY;
+    eglWindow = EGL_NO_SURFACE;
+    eglCtx = EGL_NO_CONTEXT;
+
+    LogD<<"display thread  finish"<<endl;
+}
+
+void GlWrapper::draw(uint8_t *yuvData) {
+    parseYuvData(yuvData);
 
     glViewport(left, top, viewWidth, viewHeight);
     checkGlError("glViewport");
@@ -110,6 +125,7 @@ int GlWrapper::init() {
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glUniform1i(textureSamplerHandleY,0);
 
+
     glGenTextures(1,&uTextureId);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D,uTextureId);
@@ -124,31 +140,11 @@ int GlWrapper::init() {
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glUniform1i(textureSamplerHandleV,2);
 
-//    glUniformMatrix3fv(um4_mvp, 1, GL_FALSE, SM_GLES2_getColorMatrix_bt709());
+
     glUniformMatrix4fv(um4_mvp, 1, GL_FALSE, matrix);
 
-    return 0;
-}
 
-void GlWrapper::release() {
-    LogD<<"display 3"<<endl;
-    eglMakeCurrent(eglDisp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-    eglDestroyContext(eglDisp, eglCtx);
-    eglDestroySurface(eglDisp, eglWindow);
-    eglTerminate(eglDisp);
-    eglDisp = EGL_NO_DISPLAY;
-    eglWindow = EGL_NO_SURFACE;
-    eglCtx = EGL_NO_CONTEXT;
 
-    LogD<<"display thread  finish"<<endl;
-}
-
-void GlWrapper::draw(uint8_t *yuvData) {
-    /*glViewport(0, 0, viewWidth, viewHeight);
-    checkGlError("glViewport");*/
-    glUniformMatrix4fv(um4_mvp, 1, GL_FALSE, matrix);
-
-    parseYuvData(yuvData);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, yTextureId);
