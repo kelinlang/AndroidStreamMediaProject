@@ -111,7 +111,6 @@ void AndroidMediaDecode::start() {
                             AMediaCodec_queueInputBuffer(mediaCodec,bufidx,0,fMediaPacket->getAVPacket()->size,0,0);
 
 
-
                             bufidx = AMediaCodec_dequeueOutputBuffer(mediaCodec,&info,2*1000);
                             while (bufidx >= 0){
                                 uint8_t *buf = AMediaCodec_getOutputBuffer(mediaCodec, bufidx, &bufsize);
@@ -142,42 +141,6 @@ void AndroidMediaDecode::start() {
                 callbackOnStop();
                 LogI << "AndroidMediaDecode finish" << endl;
             });
-
-         /*   readThread = std::thread([this] {
-                ssize_t bufidx = -1;
-                size_t bufsize;
-                AMediaCodecBufferInfo info;
-
-                while (runFlag)
-                {
-                    bufidx = AMediaCodec_dequeueOutputBuffer(mediaCodec,&info,2000);
-                    if(bufidx >= 0) {
-//                        LogT << "decode read thread   , bufidx : "<< bufidx <<endl;
-
-                        uint8_t *buf = AMediaCodec_getOutputBuffer(mediaCodec, bufidx, &bufsize);
-                        uint8_t *data =  (uint8_t*)malloc(bufsize);
-                        memcpy(data,buf,bufsize);
-
-                        MediaFrameImplPtr mediaFramePtr = std::make_shared<MediaFrameImpl>();
-//                        mediaFramePtr->mediaType = (int)param->codecParams->codec_type;
-                        mediaFramePtr->sourceIndex = getSourceIndex();
-                        mediaFramePtr->streamIndex = getStreamIndex();
-                        mediaFramePtr->data = data;
-                        mediaFramePtr->startPos = 0;
-                        mediaFramePtr->dataLen = bufsize;
-                        mediaFramePtr->pts = info.presentationTimeUs;
-//                        LogT << " presentationTimeUs : "<<info.presentationTimeUs << endl;
-
-                        AMediaCodec_releaseOutputBuffer(mediaCodec, bufidx, false);
-
-                        MediaFramePtr mf = std::dynamic_pointer_cast<MediaFrame>(mediaFramePtr);
-                        callbackMediaFrame(mf);
-                    }
-//                    LogT << "decode read thread   , bufidx : "<< bufidx <<endl;
-
-                }
-                LogI << "AndroidMediaDecode finish" << endl;
-            });*/
         }
     }
 }
