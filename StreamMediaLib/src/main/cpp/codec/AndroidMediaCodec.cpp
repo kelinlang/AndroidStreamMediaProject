@@ -109,9 +109,33 @@ void AndroidMediaDecode::start() {
                             memcpy(buf,fMediaPacket->getAVPacket()->data,fMediaPacket->getAVPacket()->size);
 
                             AMediaCodec_queueInputBuffer(mediaCodec,bufidx,0,fMediaPacket->getAVPacket()->size,0,0);
-                        }
 
-//                        LogT << "decode input thread   , bufidx : "<< bufidx <<endl;
+
+
+                            bufidx = AMediaCodec_dequeueOutputBuffer(mediaCodec,&info,2*1000);
+                            while (bufidx >= 0){
+                                uint8_t *buf = AMediaCodec_getOutputBuffer(mediaCodec, bufidx, &bufsize);
+                                uint8_t *data =  (uint8_t*)malloc(bufsize);
+                                memcpy(data,buf,bufsize);
+
+                                MediaFrameImplPtr mediaFramePtr = std::make_shared<MediaFrameImpl>();
+//                        mediaFramePtr->mediaType = (int)param->codecParams->codec_type;
+                                mediaFramePtr->sourceIndex = getSourceIndex();
+                                mediaFramePtr->streamIndex = getStreamIndex();
+                                mediaFramePtr->data = data;
+                                mediaFramePtr->startPos = 0;
+                                mediaFramePtr->dataLen = bufsize;
+                                mediaFramePtr->pts = info.presentationTimeUs;
+//                        LogT << " presentationTimeUs : "<<info.presentationTimeUs << endl;
+
+                                AMediaCodec_releaseOutputBuffer(mediaCodec, bufidx, false);
+
+                                MediaFramePtr mf = std::dynamic_pointer_cast<MediaFrame>(mediaFramePtr);
+                                callbackMediaFrame(mf);
+
+                                bufidx = AMediaCodec_dequeueOutputBuffer(mediaCodec,&info,2*1000);
+                            }
+                        }
                     }
                 }
 
@@ -119,7 +143,7 @@ void AndroidMediaDecode::start() {
                 LogI << "AndroidMediaDecode finish" << endl;
             });
 
-            readThread = std::thread([this] {
+         /*   readThread = std::thread([this] {
                 ssize_t bufidx = -1;
                 size_t bufsize;
                 AMediaCodecBufferInfo info;
@@ -153,7 +177,7 @@ void AndroidMediaDecode::start() {
 
                 }
                 LogI << "AndroidMediaDecode finish" << endl;
-            });
+            });*/
         }
     }
 }
@@ -166,7 +190,7 @@ void AndroidMediaDecode::stop() {
         runFlag = false;
         mediaPacketQueue->clear();
         codecThread.join();
-        readThread.join();
+//        readThread.join();
 
         if(mediaCodec){
             AMediaCodec_stop(mediaCodec);
