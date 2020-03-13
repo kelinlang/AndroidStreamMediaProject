@@ -179,10 +179,10 @@ public class MediaPlayerView extends SurfaceView implements SurfaceHolder.Callba
     private void initMetrix(){
         int angle = ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
 
-        /*switch (angle) {
+        switch (angle) {
             case Surface.ROTATION_0:
 
-                degree = 270.0f;
+                degree = 0;
                 break;
             case Surface.ROTATION_90:
                 degree = 0.0f;
@@ -198,7 +198,7 @@ public class MediaPlayerView extends SurfaceView implements SurfaceHolder.Callba
             default:
 
                 break;
-        }*/
+        }
 
 
         float aspectRatio = playerParam.viewWidth > playerParam.viewHeight
