@@ -56,9 +56,12 @@ int GlWrapper::init() {
 
     EGLint eglMajVers, eglMinVers;
     EGLint numConfigs;
-    eglInitialize(eglDisp, &eglMajVers, &eglMinVers);
+    EGLBoolean ret;
+    ret = eglInitialize(eglDisp, &eglMajVers, &eglMinVers);
+    LogD<<"eglInitialize ret : "<<ret<<endl;
 
-    eglChooseConfig(eglDisp, configSpec, &eglConf, 1, &numConfigs);
+    ret = eglChooseConfig(eglDisp, configSpec, &eglConf, 1, &numConfigs);
+    LogD<<"eglChooseConfig ret : "<<ret<<endl;
 
     eglWindow = eglCreateWindowSurface(eglDisp, eglConf,aNativeWindow, NULL);
 
@@ -70,8 +73,8 @@ int GlWrapper::init() {
     };
     eglCtx = eglCreateContext(eglDisp, eglConf,EGL_NO_CONTEXT, ctxAttr);
 
-    eglMakeCurrent(eglDisp, eglWindow, eglWindow, eglCtx);
-
+    ret = eglMakeCurrent(eglDisp, eglWindow, eglWindow, eglCtx);
+    LogD<<"eglMakeCurrent ret : "<<ret<<endl;
 
     programId = ShaderUtils::createProgram(vertexShaderString,fragmentShaderString );
 
@@ -86,6 +89,7 @@ int GlWrapper::init() {
 
 
     glViewport(left, top, viewWidth, viewHeight);
+    checkGlError("glViewport");
     LogD<<"3 left : "<<left<<" ,top : "<<top<<" , viewWidth : "<<viewWidth<<" ,viewHeight :  "<<viewHeight<<endl;
 
     glUseProgram(programId);
@@ -140,8 +144,9 @@ void GlWrapper::release() {
 }
 
 void GlWrapper::draw(uint8_t *yuvData) {
+    /*glViewport(0, 0, viewWidth, viewHeight);
+    checkGlError("glViewport");*/
     glUniformMatrix4fv(um4_mvp, 1, GL_FALSE, matrix);
-//    glViewport(0, 0, viewWidth, viewHeight);
 
     parseYuvData(yuvData);
 
@@ -167,9 +172,9 @@ void GlWrapper::draw(uint8_t *yuvData) {
     * 纹理更新完成后开始绘制
     ***/
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
+    checkGlError("glClear");
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
+    checkGlError("glDrawArrays");
     eglSwapBuffers(eglDisp, eglWindow);
 }
 
@@ -200,6 +205,27 @@ void GlWrapper::parseYuvData(uint8_t *yuvData) {
     memcpy(pixelsV, yuvData + pitches[0]+pitches[1],pitches[2]);
 }
 
+void GlWrapper::checkEglError(const char *op, EGLBoolean returnVal) {
+    if(returnVal != EGL_TRUE)
+    {
+        LogE<<op<<" error : "<<returnVal<<endl;
+    }
+
+    for(EGLint error = eglGetError(); error != EGL_SUCCESS; error
+                                                                    = eglGetError())
+    {
+
+
+    }
+}
+
+void GlWrapper::checkGlError(const char *op) {
+    for(GLint error = glGetError(); error; error
+                                                   = glGetError())
+    {
+        LogE<<op<<" error : "<<error<<endl;
+    }
+}
 
 
 void AndroidVideoDisplay::init() {

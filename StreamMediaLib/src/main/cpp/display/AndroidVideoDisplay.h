@@ -54,6 +54,9 @@ namespace StreamMedia {
 
         protected:
             void parseYuvData(uint8_t * yuvData);
+
+            void checkEglError(const char *op, EGLBoolean returnVal);
+            void checkGlError(const char *op);
         public:
             ANativeWindow *aNativeWindow;
 
