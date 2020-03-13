@@ -87,7 +87,7 @@ void FdkAacMediaDecode::start() {
             AAC_DECODER_ERROR err;
             while (runFlag)
             {
-                MediaPacketPtr mp = mediaPacketQueue.front();
+                MediaPacketPtr mp = mediaPacketQueue->front();
                 if (mp) {
                     FFmpegMediaPacketPtr fMediaPacket = std::dynamic_pointer_cast<FFmpegMediaPacket>(mp);
                     unsigned int confLen[] = {(unsigned int)fMediaPacket->getAVPacket()->size};

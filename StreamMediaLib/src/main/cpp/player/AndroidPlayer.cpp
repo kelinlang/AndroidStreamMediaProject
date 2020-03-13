@@ -38,6 +38,7 @@ void AndroidPlayer::init() {
             AndroidMediaDecodePtr decode = std::make_shared<AndroidMediaDecode>();
             decode->setSourceIndex(mediaStreamPtr->sourceIndex);
             decode->setStreamIndex(mediaStreamPtr->getStreamId());
+            decode->setMediaPacketQueue(std::make_shared<MediaPacketQueue>());
 
             AVCodecParameters* avCodecParameters = mediaStreamPtr->getStream()->codecpar;
 
@@ -84,7 +85,7 @@ void AndroidPlayer::init() {
 
 
             decode->setMediaFrameCallback(audioFrameCallback);
-
+            decode->setMediaPacketQueue(std::make_shared<MediaPacketQueue>());
             decode->init();
             audioDecode = decode;
 //            decodes.insert({ mediaStreamPtr->getStreamId(), std::move(decode) });

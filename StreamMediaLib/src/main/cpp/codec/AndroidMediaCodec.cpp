@@ -96,7 +96,7 @@ void AndroidMediaDecode::start() {
                 LogI<<"workThreadFunc loop start "<<endl;
                 while (runFlag)
                 {
-                    MediaPacketPtr mp = mediaPacketQueue.front();
+                    MediaPacketPtr mp = mediaPacketQueue->front();
                     if (mp) {
                         FFmpegMediaPacketPtr fMediaPacket = std::dynamic_pointer_cast<FFmpegMediaPacket>(mp);
 
@@ -105,21 +105,6 @@ void AndroidMediaDecode::start() {
                         if (bufidx >= 0) {
                             uint8_t* buf = AMediaCodec_getInputBuffer(mediaCodec,bufidx,&bufsize);
 //                            LogT << "decode input thread   , bufidx : "<< bufidx <<", data size : "<<fMediaPacket->getAVPacket()->size<<endl;
-                          /*  uint8_t data[7] ;
-                            int pos = 0;
-                            data[pos++] = 0xFF;
-                            data[pos++] = 0xF1;
-                            data[pos++] = ((2 - 1) << 6) + (0x3 << 2) + (1>> 2);
-                            data[pos++] = ((1 & 3) << 6) + ((fMediaPacket->getAVPacket()->size+7) >> 11);
-                            data[pos++] = ((fMediaPacket->getAVPacket()->size+7) & 0x7FF) >> 3;
-                            data[pos++] = (((fMediaPacket->getAVPacket()->size+7) & 7) << 5) + 0x1F;
-                            data[pos++] = 0xFC;
-
-                            memcpy(buf,data,7);
-                            memcpy(buf+7,fMediaPacket->getAVPacket()->data,fMediaPacket->getAVPacket()->size);*/
-
-
-
 
                             memcpy(buf,fMediaPacket->getAVPacket()->data,fMediaPacket->getAVPacket()->size);
 
@@ -179,7 +164,7 @@ void AndroidMediaDecode::stop() {
     {
         LogD << " close start" << endl;
         runFlag = false;
-        mediaPacketQueue.clear();
+        mediaPacketQueue->clear();
         codecThread.join();
         readThread.join();
 
