@@ -124,7 +124,7 @@ void AudioPlayer::intputFrame(MediaFramePtr &mediaFramePtr) {
         long t2= currentTimeStamp();
         int gop = t2 - this->gop;
         this->gop  = t2;
-        LogT<<"time : " <<  " , gop : "<<gop<<endl;
+//        LogT<<"time : " <<  " , gop : "<<gop<<endl;
 
         MediaFrameImplPtr fMediaFrame = std::dynamic_pointer_cast<MediaFrameImpl>(mediaFramePtr);
         (*pcmBufferQueue)->Enqueue(pcmBufferQueue, fMediaFrame->data, fMediaFrame->dataLen);

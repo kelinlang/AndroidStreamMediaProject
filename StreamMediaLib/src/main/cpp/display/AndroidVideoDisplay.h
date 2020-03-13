@@ -36,36 +36,56 @@ using namespace StreamMedia::media;
 
 namespace StreamMedia {
     namespace media {
-#define GET_STR(x) #x
 
 
-#define SM_GLES2_MAX_PLANE 3
 
-
-        class DiaplayOpaque{
+        class GlWrapper{
         public:
-            //opengl相关
-            float* cacheMatrixTmp;
+            #define GET_STR(x) #x
+            #define SM_GLES2_MAX_PLANE 3
+
+        public:
+            GlWrapper();
+            ~GlWrapper();
+
+            int init();
+            void release();
+            void draw(uint8_t * yuvData);
+
+        protected:
+            void parseYuvData(uint8_t * yuvData);
+        public:
             ANativeWindow *aNativeWindow;
 
             int pitches[SM_GLES2_MAX_PLANE]; /**< in bytes, Read-only */  //像素长度
-            unsigned char* pixelsY;
-            unsigned char* pixelsU;
-            unsigned char* pixelsV;
-        };
-        using DiaplayOpaquePtr = std::shared_ptr<DiaplayOpaque>;
+            unsigned char* pixelsY = nullptr;
+            unsigned char* pixelsU = nullptr;
+            unsigned char* pixelsV = nullptr;
 
-        class AndroidVideoDisplay :public  VideoDisplay{
-        public:
-            void init();
-            void release();
-            void start();
-            void stop();
+            int videoWidth;
+            int videoHeight;
 
-        protected:
-            void parseYuvData(MediaFrameImplPtr& fMediaFrame);
-        public:
-            DiaplayOpaquePtr displayOpaque = std::make_shared<DiaplayOpaque>();
+            int left = 0;
+            int top = 0;
+            int viewWidth;
+            int viewHeight;
+            float *matrix;
+
+            EGLConfig eglConf;
+            EGLSurface eglWindow;
+            EGLContext eglCtx;
+
+            EGLDisplay eglDisp;
+
+            GLuint programId;
+            /***
+            * 初始化空的yuv纹理
+            ***/
+            GLuint yTextureId;
+            GLuint uTextureId;
+            GLuint vTextureId;
+
+            GLuint um4_mvp;
 
             const char *vertexShaderString = GET_STR(
                     attribute vec4 aPosition;
@@ -97,6 +117,17 @@ namespace StreamMedia {
                         gl_FragColor = vec4(rgb, 1.0);
                     }
             );
+        };
+
+        class AndroidVideoDisplay :public  VideoDisplay{
+        public:
+            void init();
+            void release();
+            void start();
+            void stop();
+
+        public:
+            GlWrapper glWrapper;
         };
         using AndroidVideoDisplayPtr = std::shared_ptr<AndroidVideoDisplay>;
 

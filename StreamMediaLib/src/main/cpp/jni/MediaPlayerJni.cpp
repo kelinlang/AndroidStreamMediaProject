@@ -54,7 +54,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_creat
 extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_setVideoSurface
         (JNIEnv *env, jobject object, jobject surface) {
     LogI<<"setVideoSurface"<<endl;
-    androidPlayPtr->videoDisplayPtr->displayOpaque->aNativeWindow = ANativeWindow_fromSurface(env,surface);
+    androidPlayPtr->videoDisplayPtr->glWrapper.aNativeWindow = ANativeWindow_fromSurface(env,surface);
 }
 
 

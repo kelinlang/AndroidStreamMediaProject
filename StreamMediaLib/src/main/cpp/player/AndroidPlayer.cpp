@@ -49,7 +49,7 @@ void AndroidPlayer::init() {
             AMediaFormat_setInt32(codecParamsPtr->mediaFormat, AMEDIAFORMAT_KEY_HEIGHT, avCodecParameters->height); // ÊÓÆµ¸ß¶È
             videoDisplayParamPtr->videoWidth = avCodecParameters->width;
             videoDisplayParamPtr->videoHeight = avCodecParameters->height;
-
+            videoDisplayParamPtr->frameRate = mediaStreamPtr->getFrameRate();
             LogI << "initDecode codec name : " << endl;
 
             decode->setMediaCodecParams(std::dynamic_pointer_cast<MediaCodecParams>(codecParamsPtr));
