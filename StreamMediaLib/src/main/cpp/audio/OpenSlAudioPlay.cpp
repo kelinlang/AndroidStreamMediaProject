@@ -137,6 +137,17 @@ void AudioPlayer::pcmBufferCallBack(SLAndroidSimpleBufferQueueItf bf, void *cont
     long t1= currentTimeStamp();
 
 
+    MediaFrameImpl* curFrame = audioPlayer->mediaFrameQueuePtr->peekReadable();
+    if(curFrame){
+        (*audioPlayer->pcmBufferQueue)->Enqueue(audioPlayer->pcmBufferQueue, curFrame->data, curFrame->dataLen);
+        audioPlayer->clockManagerPtr->syncVideoTime(curFrame);
+    } else{
+        LogT<<"audio play curFrame null"<<endl;
+    }
+
+
+
+
    /* MediaFramePtr mf = audioPlayer->mediaFrameQueue.front();
 //    while (!mf){
 //        mf = audioPlayer->mediaFrameQueue.front();

@@ -28,6 +28,7 @@ extern "C" {
 #include "ffmpeg/ffmpeg_media_format.h"
 #include "opengl/cloudvoice_shader_utils.h"
 #include "media/media_clock.h"
+#include "media/media_queue.h"
 
 
 
@@ -154,6 +155,8 @@ namespace StreamMedia {
         public:
             GlWrapper glWrapper;
             ClockManagerPtr clockManagerPtr;
+
+            MediaFrameQueuePtr mediaFrameQueuePtr;
         };
         using AndroidVideoDisplayPtr = std::shared_ptr<AndroidVideoDisplay>;
 

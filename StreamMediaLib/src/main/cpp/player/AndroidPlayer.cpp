@@ -8,6 +8,8 @@ AndroidPlayer::AndroidPlayer() {
     videoDisplayPtr = std::make_shared<AndroidVideoDisplay>();
     audioPlayerPtr = std::make_shared<AudioPlayer>();
     clockManagerPtr = std::make_shared<ClockManager>();
+    videoMediaFrameQueuePtr = std::make_shared<MediaFrameQueue>();
+    audioMediaFrameQueuePtr = std::make_shared<ClockManager>();
 }
 
 
@@ -47,18 +49,22 @@ void AndroidPlayer::init() {
             AVCodecParameters* avCodecParameters = mediaStreamPtr->getStream()->codecpar;
 
             AndroidMediaCodecParamsPtr codecParamsPtr = std::make_shared<AndroidMediaCodecParams>();
+            codecParamsPtr->tb.num = mediaStreamPtr->getStream()->time_base.num;//时间基
+            codecParamsPtr->tb.den = mediaStreamPtr->getStream()->time_base.den;
+
             codecParamsPtr->mediaFormat = AMediaFormat_new();
             AMediaFormat_setString(codecParamsPtr->mediaFormat, "mime", "video/avc");
             AMediaFormat_setInt32(codecParamsPtr->mediaFormat, AMEDIAFORMAT_KEY_WIDTH, avCodecParameters->width); // 视频宽度
             AMediaFormat_setInt32(codecParamsPtr->mediaFormat, AMEDIAFORMAT_KEY_HEIGHT, avCodecParameters->height); // 视频高度
             videoDisplayParamPtr->videoWidth = avCodecParameters->width;
             videoDisplayParamPtr->videoHeight = avCodecParameters->height;
-            videoDisplayParamPtr->frameRate = mediaStreamPtr->getFrameRate();
+            videoDisplayParamPtr->frameRate = mediaStreamPtr->getFrameRate();//帧率
             LogI << "initDecode codec name : " << endl;
 
             decode->setMediaCodecParams(std::dynamic_pointer_cast<MediaCodecParams>(codecParamsPtr));
             decode->setMediaFrameCallback(mediaFrameCallback);
-
+            decode->mediaFrameQueuePtr = videoMediaFrameQueuePtr;
+            decode->clockManagerPtr = clockManagerPtr;
             decode->init();
             decodes.insert({ mediaStreamPtr->getStreamId(), std::move(decode) });
 
@@ -87,7 +93,11 @@ void AndroidPlayer::init() {
             memcpy(decode->conf,mediaStreamPtr->getStream()->codec->extradata,mediaStreamPtr->getStream()->codec->extradata_size);
             LogI << "initDecode aac decode name : " << endl;
 
+            decode->tb.num = mediaStreamPtr->getStream()->time_base.num;//时间基
+            decode->tb.den = mediaStreamPtr->getStream()->time_base.den;
 
+            decode->clockManagerPtr = clockManagerPtr;
+            decode->mediaFrameQueuePtr = audioMediaFrameQueuePtr;
             decode->setMediaFrameCallback(audioFrameCallback);
             decode->setMediaPacketQueue(std::make_shared<MediaPacketQueue>());
             decode->init();
@@ -95,11 +105,12 @@ void AndroidPlayer::init() {
 //            decodes.insert({ mediaStreamPtr->getStreamId(), std::move(decode) });
         }
 
-
+        videoDisplayPtr->mediaFrameQueuePtr = videoMediaFrameQueuePtr;
         videoDisplayPtr->setVideoDisplayParam(videoDisplayParamPtr);
 
         videoDisplayPtr->init();
 
+        audioPlayerPtr->mediaFrameQueuePtr = videoMediaFrameQueuePtr;
         audioPlayerPtr->init();
     }
 }

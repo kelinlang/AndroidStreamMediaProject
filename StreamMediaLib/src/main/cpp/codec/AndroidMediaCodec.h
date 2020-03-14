@@ -9,6 +9,8 @@
 #include <android/native_window.h>
 #include "media/media_codec.h"
 #include "ffmpeg/ffmpeg_media_format.h"
+#include "media/media_queue.h"
+#include "media/media_clock.h"
 
 using namespace CommonLib;
 using namespace StreamMedia::media;
@@ -23,6 +25,8 @@ namespace StreamMedia {
 
         public:
             AMediaFormat* mediaFormat;
+
+            AVRational tb;
         };
         using AndroidMediaCodecParamsPtr = std::shared_ptr<AndroidMediaCodecParams>;
 
@@ -53,6 +57,9 @@ namespace StreamMedia {
             AMediaCodec* mediaCodec;
 
             std::thread readThread;
+
+            MediaFrameQueuePtr mediaFrameQueuePtr;
+            ClockManagerPtr clockManagerPtr;
         };
         using AndroidMediaDecodePtr = std::shared_ptr<AndroidMediaDecode>;
     }

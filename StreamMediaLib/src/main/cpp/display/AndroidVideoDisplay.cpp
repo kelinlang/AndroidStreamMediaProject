@@ -236,15 +236,83 @@ void AndroidVideoDisplay::start() {
         glWrapper.init();
 
         runFlag = true;
-        while (runFlag) {
 
+   /*     while (runFlag) {
             MediaFramePtr mf = mediaFrameQueue.front();
             if (mf) {
                 MediaFrameImplPtr fMediaFrame = std::dynamic_pointer_cast<MediaFrameImpl>(mf);
                 glWrapper.draw(fMediaFrame->data);
             }
+        }*/
 
+        double remainingTime = 0.0;
+        while (runFlag) {
+            if(remainingTime > 0){
+                av_usleep((int64_t)(remainingTime * 1000000.0));
+            }
+            remainingTime = 0.01;//10ms
+            double time;//当前系统平台的时间，单位秒
+
+            if(mediaFrameQueuePtr->remainNumFrame() == 0){
+                if(mediaFrameQueuePtr->isShown()){
+                    MediaFrameImpl* mf = mediaFrameQueuePtr->peekLast();
+                    glWrapper.draw(mf->data);
+                } else{
+                    LogT<<"video displa sleep 10 ms"<<endl;
+                    av_usleep(10*1000);
+                }
+            } else{
+                double lastDuration, duration, delay;
+
+                MediaFrameImpl* lastFrame = mediaFrameQueuePtr->peekLast();
+                MediaFrameImpl* curFrame = mediaFrameQueuePtr->peek();
+
+                if(curFrame->serial != clockManagerPtr->getVideoQueueSerial()){
+                    mediaFrameQueuePtr->next();//不同序列的直接丢弃
+                    remainingTime = 0.0;
+                    continue;
+                }
+                if(lastFrame->serial != curFrame->serial ){
+                    clockManagerPtr->refreshVideoFrameTimer();
+                }
+
+                lastDuration = clockManagerPtr->videoDuration(lastFrame,curFrame);
+                delay = clockManagerPtr->computeVideoDelay(lastDuration);
+
+                time= av_gettime_relative()/1000000.0;
+                // 当前帧播放时刻(is->frame_timer+delay)大于当前时刻(time)，表示播放时刻未到，播放线程休眠remaining_time
+                if(time < clockManagerPtr->getVideoFrameTimer() + delay){
+                    remainingTime = FFMIN(clockManagerPtr->getVideoFrameTimer() + delay - time, remainingTime);
+                    glWrapper.draw(mediaFrameQueuePtr->peekLast()->data);//再播一次之前显示的
+                    continue;
+                }
+                clockManagerPtr->updateVideoFrameTimer(delay);
+                if (delay > 0 && time - clockManagerPtr->getVideoFrameTimer() > AV_SYNC_THRESHOLD_MAX){
+                    clockManagerPtr->refreshVideoFrameTimer();
+                }
+                if(!isnan(curFrame->printTimeStamp)){
+                    clockManagerPtr->syncVideoTime(curFrame);
+                }
+
+                if(mediaFrameQueuePtr->remainNumFrame() > 1){
+                    MediaFrameImpl* nextFrame = mediaFrameQueuePtr->peekNext();
+                    duration = clockManagerPtr->videoDuration(curFrame,nextFrame);
+                    if(time >clockManagerPtr->getVideoFrameTimer() +duration)
+                    {
+                        mediaFrameQueuePtr->next();//丢弃一帧
+                        LogT<<"drop video frame"<<endl;
+                        remainingTime = 0.0;//设置为0，里面重新循环可能再次丢帧
+                        continue;
+                    }
+                } else{
+                    glWrapper.draw(curFrame->data);//显示当前帧
+                    mediaFrameQueuePtr->next();
+                    break;
+                }
+            }
         }
+
+
         glWrapper.release();
 
         LogD<<"display thread  finish  2"<<endl;

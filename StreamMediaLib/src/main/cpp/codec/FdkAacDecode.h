@@ -8,6 +8,8 @@
 #include "ffmpeg/ffmpeg_media_format.h"
 #include "fdk-aac/aacdecoder_lib.h"
 #include "container/file_saver.h"
+#include "media/media_queue.h"
+#include "media/media_clock.h"
 
 using namespace CommonLib;
 using namespace StreamMedia::media;
@@ -57,6 +59,12 @@ namespace StreamMedia {
             int 					outputBufferSize = 2048 * sizeof(INT_PCM)*8;
 
 //            FileSaver fileSaver;
+
+            MediaFrameQueuePtr mediaFrameQueuePtr;
+
+            ClockManagerPtr clockManagerPtr;
+
+            AVRational tb;
         };
         using  FdkAacMediaDecodePtr = std::shared_ptr< FdkAacMediaDecode>;
     }

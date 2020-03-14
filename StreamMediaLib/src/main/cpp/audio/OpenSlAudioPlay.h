@@ -13,7 +13,7 @@
 #include "container/xspsc_queue.h"
 #include "buf_manager.h"
 #include "media/media_clock.h"
-
+#include "media/media_queue.h"
 
 using namespace CommonLib;
 using namespace StreamMedia::media;
@@ -72,6 +72,8 @@ namespace StreamMedia {
 
         public:
             ClockManagerPtr clockManagerPtr;
+
+            MediaFrameQueuePtr mediaFrameQueuePtr;
         };
         using AudioPlayerPtr = std::shared_ptr<AudioPlayer>;
     }
