@@ -69,11 +69,7 @@ void AudioPlayer::init() {
 //    获取音量接口
     (*pcmPlayerObject)->GetInterface(pcmPlayerObject, SL_IID_VOLUME, &pcmPlayerVolume);
 
-//    获取播放状态接口
-    (*pcmPlayerPlay)->SetPlayState(pcmPlayerPlay, SL_PLAYSTATE_PLAYING);
 
-//    主动调用回调函数开始工作
-    runFlag = true;
 
    /* uint8_t * data = (uint8_t *)malloc(1024);
     (*pcmBufferQueue)->Enqueue(pcmBufferQueue, data, 1024);*/
@@ -84,7 +80,11 @@ void AudioPlayer::init() {
 }
 
 void AudioPlayer::start() {
+//    获取播放状态接口
+    (*pcmPlayerPlay)->SetPlayState(pcmPlayerPlay, SL_PLAYSTATE_PLAYING);
 
+//    主动调用回调函数开始工作
+    runFlag = true;
 }
 
 void AudioPlayer::stop() {

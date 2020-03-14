@@ -148,7 +148,7 @@ void FdkAacMediaDecode::start() {
                     mediaFramePtr->startPos = 0;
                     mediaFramePtr->dataLen = size;
                     mediaFramePtr->pts = fMediaPacket->getAVPacket()->pts;
-//                                mediaFramePtr->duration =
+                    mediaFramePtr->duration =av_q2d((AVRational){info->frameSize, 48000});
                     mediaFramePtr->printTimeStamp = (mediaFramePtr->pts == AV_NOPTS_VALUE) ? NAN : mediaFramePtr->pts * av_q2d(tb);
                     mediaFramePtr->serial = clockManagerPtr->getVideoQueueSerial();
                     mediaFrameQueuePtr->push();

@@ -8,8 +8,8 @@ AndroidPlayer::AndroidPlayer() {
     videoDisplayPtr = std::make_shared<AndroidVideoDisplay>();
     audioPlayerPtr = std::make_shared<AudioPlayer>();
     clockManagerPtr = std::make_shared<ClockManager>();
-    videoMediaFrameQueuePtr = std::make_shared<MediaFrameQueue>();
-    audioMediaFrameQueuePtr = std::make_shared<ClockManager>();
+    videoMediaFrameQueuePtr = std::make_shared<MediaFrameQueue>(FFMIN(VIDEO_PICTURE_QUEUE_SIZE, FRAME_QUEUE_SIZE),true);
+    audioMediaFrameQueuePtr = std::make_shared<MediaFrameQueue>(FFMIN(SAMPLE_QUEUE_SIZE, FRAME_QUEUE_SIZE),true);
 }
 
 
@@ -27,6 +27,11 @@ void AndroidPlayer::init() {
     audioPlayerPtr->clockManagerPtr = clockManagerPtr;
     videoDisplayPtr->clockManagerPtr = clockManagerPtr;
 
+    audioPacketQueuePtr = std::make_shared<MediaPacketQueue>();
+    videoPacketQueuePtr = std::make_shared<MediaPacketQueue>();
+
+    mediaSourePtr->videoPacketQueuePtr = videoPacketQueuePtr;
+    mediaSourePtr->audioPacketQueuePtr = audioPacketQueuePtr;
     mediaSourePtr->setIndex(0);
     mediaSourePtr->setUrl(videoDisplayParamPtr->url);
     mediaSourePtr->init();
@@ -44,7 +49,7 @@ void AndroidPlayer::init() {
             AndroidMediaDecodePtr decode = std::make_shared<AndroidMediaDecode>();
             decode->setSourceIndex(mediaStreamPtr->sourceIndex);
             decode->setStreamIndex(mediaStreamPtr->getStreamId());
-            decode->setMediaPacketQueue(std::make_shared<MediaPacketQueue>());
+            decode->setMediaPacketQueue(videoPacketQueuePtr);
 
             AVCodecParameters* avCodecParameters = mediaStreamPtr->getStream()->codecpar;
 
@@ -99,7 +104,7 @@ void AndroidPlayer::init() {
             decode->clockManagerPtr = clockManagerPtr;
             decode->mediaFrameQueuePtr = audioMediaFrameQueuePtr;
             decode->setMediaFrameCallback(audioFrameCallback);
-            decode->setMediaPacketQueue(std::make_shared<MediaPacketQueue>());
+            decode->setMediaPacketQueue(audioPacketQueuePtr);
             decode->init();
             audioDecode = decode;
 //            decodes.insert({ mediaStreamPtr->getStreamId(), std::move(decode) });

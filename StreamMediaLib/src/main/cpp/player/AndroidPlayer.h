@@ -35,6 +35,9 @@ namespace StreamMedia{
             AudioPlayerPtr audioPlayerPtr ;
             FdkAacMediaDecodePtr audioDecode;
 
+            MediaPacketQueuePtr audioPacketQueuePtr;
+            MediaPacketQueuePtr videoPacketQueuePtr;
+
             MediaFrameQueuePtr videoMediaFrameQueuePtr;
             MediaFrameQueuePtr audioMediaFrameQueuePtr;
 

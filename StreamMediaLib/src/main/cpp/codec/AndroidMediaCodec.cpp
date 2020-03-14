@@ -141,7 +141,7 @@ void AndroidMediaDecode::start() {
                                 mediaFramePtr->startPos = 0;
                                 mediaFramePtr->dataLen = bufsize;
                                 mediaFramePtr->pts = info.presentationTimeUs;
-//                                mediaFramePtr->duration =
+                                mediaFramePtr->duration = 1/30.0;
                                 mediaFramePtr->printTimeStamp = (mediaFramePtr->pts == AV_NOPTS_VALUE) ? NAN : mediaFramePtr->pts * av_q2d(param->tb);
                                 mediaFramePtr->serial = clockManagerPtr->getVideoQueueSerial();
                                 mediaFrameQueuePtr->push();
