@@ -115,7 +115,7 @@ void AndroidPlayer::init() {
 
         videoDisplayPtr->init();
 
-        audioPlayerPtr->mediaFrameQueuePtr = videoMediaFrameQueuePtr;
+        audioPlayerPtr->mediaFrameQueuePtr = audioMediaFrameQueuePtr;
         audioPlayerPtr->init();
     }
 }

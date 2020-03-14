@@ -56,10 +56,10 @@ int GlWrapper::init() {
     EGLint numConfigs;
     EGLBoolean ret;
     ret = eglInitialize(eglDisp, &eglMajVers, &eglMinVers);
-    LogD<<"eglInitialize ret : "<<ret<<endl;
+//    LogD<<"eglInitialize ret : "<<ret<<endl;
 
     ret = eglChooseConfig(eglDisp, configSpec, &eglConf, 1, &numConfigs);
-    LogD<<"eglChooseConfig ret : "<<ret<<endl;
+//    LogD<<"eglChooseConfig ret : "<<ret<<endl;
 
     eglWindow = eglCreateWindowSurface(eglDisp, eglConf,aNativeWindow, NULL);
 
@@ -72,7 +72,7 @@ int GlWrapper::init() {
     eglCtx = eglCreateContext(eglDisp, eglConf,EGL_NO_CONTEXT, ctxAttr);
 
     ret = eglMakeCurrent(eglDisp, eglWindow, eglWindow, eglCtx);
-    LogD<<"eglMakeCurrent ret : "<<ret<<endl;
+//    LogD<<"eglMakeCurrent ret : "<<ret<<endl;
 
     programId = ShaderUtils::createProgram(vertexShaderString,fragmentShaderString );
 
@@ -244,6 +244,13 @@ void AndroidVideoDisplay::start() {
                 glWrapper.draw(fMediaFrame->data);
             }
         }*/
+        while (runFlag) {
+            if(mediaFrameQueuePtr->remainNumFrame() > 1){
+                mediaFrameQueuePtr->next();//¶ªÆúÒ»Ö¡
+            } else{
+                av_usleep(10*100);
+            }
+        }
 
         double remainingTime = 0.0;
         while (runFlag) {

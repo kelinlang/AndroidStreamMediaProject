@@ -48,7 +48,7 @@ namespace StreamMedia{
                     case StreamType::StreamVideo:
                         try {
                             if(decodes.at(mediaPacketPtr->getStreamIndex())){
-                                decodes.at(mediaPacketPtr->getStreamIndex())->sendPacket(mediaPacketPtr);
+//                                decodes.at(mediaPacketPtr->getStreamIndex())->sendPacket(mediaPacketPtr);
                             }
                         }catch (std::out_of_range & error){
 
