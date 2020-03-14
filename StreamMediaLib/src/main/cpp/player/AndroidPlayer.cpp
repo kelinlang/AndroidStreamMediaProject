@@ -130,7 +130,7 @@ void AndroidPlayer::start() {
         audioDecode->start();
     }
     if(audioPlayerPtr){
-        audioPlayerPtr->init();
+        audioPlayerPtr->start();
     }
 }
 

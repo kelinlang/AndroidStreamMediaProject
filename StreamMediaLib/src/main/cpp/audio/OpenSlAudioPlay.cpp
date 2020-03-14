@@ -83,7 +83,10 @@ void AudioPlayer::start() {
 //    获取播放状态接口
     (*pcmPlayerPlay)->SetPlayState(pcmPlayerPlay, SL_PLAYSTATE_PLAYING);
 
-//    主动调用回调函数开始工作
+    int size = 1024*2*2;
+    uint8_t * data = (uint8_t *)malloc(size);
+    memset(data, 0, size);
+    (*pcmBufferQueue)->Enqueue(pcmBufferQueue, data, size);
     runFlag = true;
 }
 
