@@ -7,6 +7,7 @@ AndroidPlayer::AndroidPlayer() {
     mediaSourePtr = std::make_shared<FFmpegMediaSource>();
     videoDisplayPtr = std::make_shared<AndroidVideoDisplay>();
     audioPlayerPtr = std::make_shared<AudioPlayer>();
+    clockManagerPtr = std::make_shared<ClockManager>();
 }
 
 
@@ -20,6 +21,9 @@ void AndroidPlayer::init() {
         LogE<<"videoDisplayParamPtr is null"<<endl;
         return;
     }
+    clockManagerPtr->init();
+    audioPlayerPtr->clockManagerPtr = clockManagerPtr;
+    videoDisplayPtr->clockManagerPtr = clockManagerPtr;
 
     mediaSourePtr->setIndex(0);
     mediaSourePtr->setUrl(videoDisplayParamPtr->url);
@@ -93,6 +97,7 @@ void AndroidPlayer::init() {
 
 
         videoDisplayPtr->setVideoDisplayParam(videoDisplayParamPtr);
+
         videoDisplayPtr->init();
 
         audioPlayerPtr->init();

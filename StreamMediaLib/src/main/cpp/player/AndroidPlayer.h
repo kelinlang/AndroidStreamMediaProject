@@ -34,6 +34,8 @@ namespace StreamMedia{
 
             AudioPlayerPtr audioPlayerPtr ;
             FdkAacMediaDecodePtr audioDecode;
+
+            ClockManagerPtr clockManagerPtr;
         protected:
             MediaPacketCallback mediaPacketCallback = [this](MediaPacketPtr&& mediaPacketPtr) {
                 switch (mediaPacketPtr->getStreamType()){

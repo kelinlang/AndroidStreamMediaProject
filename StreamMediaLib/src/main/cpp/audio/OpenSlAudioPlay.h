@@ -12,6 +12,7 @@
 #include "container/file_saver.h"
 #include "container/xspsc_queue.h"
 #include "buf_manager.h"
+#include "media/media_clock.h"
 
 
 using namespace CommonLib;
@@ -67,6 +68,10 @@ namespace StreamMedia {
             x_int_queue_t pcmQueue;
 
             long gop = 0;
+
+
+        public:
+            ClockManagerPtr clockManagerPtr;
         };
         using AudioPlayerPtr = std::shared_ptr<AudioPlayer>;
     }
