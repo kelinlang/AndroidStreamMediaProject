@@ -90,7 +90,8 @@ void FdkAacMediaDecode::start() {
                 MediaPacketPtr mp = nullptr;
                 do{
                     mp = mediaPacketQueue->front();
-                    if(mp->serial){                        packetSerial = mp->serial;//获取包去解码的时候，解码器的包序号设置成包的序号
+                    if(mp->serial){
+                        packetSerial = mp->serial;//获取包去解码的时候，解码器的包序号设置成包的序号
                     }
 //                    LogT<<"packetSerial : "<<packetSerial<<" ,mediaPacketQueue->serial : "<<mediaPacketQueue->serial<<endl;
                 }while (mediaPacketQueue->serial != packetSerial);//直到取出的包序号一致

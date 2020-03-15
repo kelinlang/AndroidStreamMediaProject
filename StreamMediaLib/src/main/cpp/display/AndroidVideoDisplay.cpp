@@ -244,13 +244,13 @@ void AndroidVideoDisplay::start() {
                 glWrapper.draw(fMediaFrame->data);
             }
         }*/
-        while (runFlag) {
+/*        while (runFlag) {
             if(mediaFrameQueuePtr->remainNumFrame() > 1){
                 mediaFrameQueuePtr->next();//¶ªÆúÒ»Ö¡
             } else{
                 av_usleep(10*100);
             }
-        }
+        }*/
 
         double remainingTime = 0.0;
         while (runFlag) {
