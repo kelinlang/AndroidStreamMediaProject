@@ -90,14 +90,14 @@ void FdkAacMediaDecode::start() {
                 MediaPacketPtr mp = nullptr;
                 do{
                     mp = mediaPacketQueue->front();
-                    if(mp->serial){
-                        packetSerial = mp->serial;//获取包去解码的时候，解码器的包序号设置成包的序号
+                    if(mp->serial){                        packetSerial = mp->serial;//获取包去解码的时候，解码器的包序号设置成包的序号
                     }
+//                    LogT<<"packetSerial : "<<packetSerial<<" ,mediaPacketQueue->serial : "<<mediaPacketQueue->serial<<endl;
                 }while (mediaPacketQueue->serial != packetSerial);//直到取出的包序号一致
 
                 if (mp) {
                     FFmpegMediaPacketPtr fMediaPacket = std::dynamic_pointer_cast<FFmpegMediaPacket>(mp);
-                    if(fMediaPacket->getAVPacket()->data != nullptr){
+                    if(fMediaPacket->getAVPacket()->data == nullptr){
                         LogT<<"audio refresh packet or finish packet"<<endl;
                         continue;
                     }
