@@ -63,30 +63,43 @@ void AudioPlayer::init() {
 //    注册回调缓冲区 获取缓冲队列接口
     (*pcmPlayerObject)->GetInterface(pcmPlayerObject, SL_IID_BUFFERQUEUE, &pcmBufferQueue);
 
+    result = ( * pcmPlayerObject) -> GetInterface(pcmPlayerObject,SL_IID_ANDROIDCONFIGURATION, &playerConfig);
+    if (result != SL_RESULT_SUCCESS) {
+        LogI<<"config GetInterface failed with result : "<<result<<endl;
+
+    }
 
     //缓冲接口回调
     (*pcmBufferQueue)->RegisterCallback(pcmBufferQueue, pcmBufferCallBack, this);
 //    获取音量接口
     (*pcmPlayerObject)->GetInterface(pcmPlayerObject, SL_IID_VOLUME, &pcmPlayerVolume);
 
-
+    internalQueuePtr = std::make_shared<MediaFrameQueue>(DEVICE_SHADOW_BUFFER_QUEUE_LEN);
 
    /* uint8_t * data = (uint8_t *)malloc(1024);
     (*pcmBufferQueue)->Enqueue(pcmBufferQueue, data, 1024);*/
 //    pcmBufferCallBack(pcmBufferQueue, this);
 
     LogT<<"--------init success----------" <<endl;
-    fileSaver.open();
+//    fileSaver.open();
 }
 
 void AudioPlayer::start() {
 //    获取播放状态接口
+
+
+    slientMediaFramePtr = new MediaFrameImpl();
+    slientMediaFramePtr->silentFlag = true;
+
+    slientMediaFramePtr->dataLen = 1024*2*2;
+    slientMediaFramePtr->data = (uint8_t *)malloc(slientMediaFramePtr->dataLen);
+    memset(slientMediaFramePtr->data, 0, slientMediaFramePtr->dataLen);
+
+    (*pcmBufferQueue)->Enqueue(pcmBufferQueue, slientMediaFramePtr->data, slientMediaFramePtr->dataLen);
+    internalQueuePtr->push(slientMediaFramePtr);//静音包同时放入内存队列
+
     (*pcmPlayerPlay)->SetPlayState(pcmPlayerPlay, SL_PLAYSTATE_PLAYING);
 
-    int size = 1024*2*2;
-    uint8_t * data = (uint8_t *)malloc(size);
-    memset(data, 0, size);
-    (*pcmBufferQueue)->Enqueue(pcmBufferQueue, data, size);
     runFlag = true;
 }
 
@@ -134,56 +147,78 @@ void AudioPlayer::intputFrame(MediaFramePtr &mediaFramePtr) {
     }
 }
 
+
+
+void AudioPlayer::doPutAudioData() {
+    long t1= currentTimeStamp();
+
+    MediaFrameImpl* curFrame = mediaFrameQueuePtr->peekReadable();
+    if(curFrame){
+        (*pcmBufferQueue)->Enqueue(pcmBufferQueue, curFrame->data, curFrame->dataLen);
+        mediaFrameQueuePtr->next();
+        internalQueuePtr->push(curFrame);
+        audioPutTime = av_gettime_relative() / 1000000.0;
+    } else{
+        LogT<<"audioPlay play slient 2"<<endl;
+        internalQueuePtr->push(slientMediaFramePtr);//继续播放静音包
+    }
+
+    long t2= currentTimeStamp();
+    int gop = t2 - this->gop;
+    this->gop  = t2;
+//    LogT<<"audioPlay time : "<< t2-t1<<  " , gop : "<<gop<<endl;
+}
+
+void AudioPlayer::doAudioCallback() {
+    audioCallbackTime = av_gettime_relative() / 1000000.0;
+
+    /*SLuint32 audioLatency = 0;
+    SLAndroidSimpleBufferQueueState state;
+    (*pcmBufferQueue)->GetState(pcmBufferQueue,&state);
+    LogT<<"audioPlay play state  count : "<<state.count<< ", index :"<< state.index <<" ,audioLatency : "<<audioLatency<<endl;*/
+
+    MediaFrameImpl* playedMediaFramePtr = internalQueuePtr->front();
+    if(!playedMediaFramePtr){
+        LogT<<"audio playedMediaFramePtr null error"<<endl;
+        return;
+    }
+    internalQueuePtr->pop();
+    if(!playedMediaFramePtr->silentFlag){
+        LogT<<"audioPlay gop : "<< (audioCallbackTime-audioPutTime)*1000<<" ms"<<endl;
+        clockManagerPtr->syncAudioTime(playedMediaFramePtr);
+    }
+
+    if( !onceSilent){
+        if(mediaFrameQueuePtr->getSize() < PLAY_KICKSTART_BUFFER_COUNT){
+            (*pcmBufferQueue)->Enqueue(pcmBufferQueue, slientMediaFramePtr->data, slientMediaFramePtr->dataLen);
+            internalQueuePtr->push(slientMediaFramePtr);//继续播放静音包
+            LogT<<"audioPlay play slient  1"<<endl;
+            return;
+        } else{
+            LogT<<"audioPlay play input  3"<<endl;
+            for (int32_t idx = 0; idx < PLAY_KICKSTART_BUFFER_COUNT; idx++) {//取PLAY_KICKSTART_BUFFER_COUNT数量的buf放入播放器播放
+                doPutAudioData();
+            }
+            onceSilent = true;
+        }
+    } else{
+        doPutAudioData();
+    }
+}
+
+
 void AudioPlayer::pcmBufferCallBack(SLAndroidSimpleBufferQueueItf bf, void *context) {
 //    LogT<<"--------pcmBufferCallBack------1----" <<endl;
     AudioPlayer * audioPlayer = static_cast<AudioPlayer*>(context);
-    long t1= currentTimeStamp();
+    audioPlayer->doAudioCallback();
 
-
-    MediaFrameImpl* curFrame = audioPlayer->mediaFrameQueuePtr->peekReadable();
-    if(curFrame){
-        (*audioPlayer->pcmBufferQueue)->Enqueue(audioPlayer->pcmBufferQueue, curFrame->data, curFrame->dataLen);
-        audioPlayer->clockManagerPtr->syncAudioTime(curFrame);
-//        LogT<<"audio play syncAudioTime finish"<<endl;
-        audioPlayer->mediaFrameQueuePtr->next();
-    } else{
-        LogT<<"audio play curFrame null"<<endl;
-    }
-
-
-      long t2= currentTimeStamp();
+ /*     long t2= currentTimeStamp();
       int gop = t2 - audioPlayer->gop;
-      audioPlayer->gop  = t2;
+      audioPlayer->gop  = t2;*/
 //      LogT<<"time : "<< t2-t1<<  " , gop : "<<gop<<endl;
 
 
-   /* MediaFramePtr mf = audioPlayer->mediaFrameQueue.front();
-//    while (!mf){
-//        mf = audioPlayer->mediaFrameQueue.front();
-//    }
-    if (mf && audioPlayer->runFlag) {
-        MediaFrameImplPtr fMediaFrame = std::dynamic_pointer_cast<MediaFrameImpl>(mf);
-
-//        audioPlayer->fileSaver.write(data,fMediaFrame->dataLen);
-
-        (*audioPlayer->pcmBufferQueue)->Enqueue(audioPlayer->pcmBufferQueue, fMediaFrame->data, fMediaFrame->dataLen);
-        fMediaFrame->data = nullptr;
-        fMediaFrame->dataLen = 0;
-    } else{
-        LogT<<"mf is  null "<<endl;
-    }*/
-
- /*   MediaFrameImplPtr fMediaFrame = audioPlayer->pcmQueue.front();
-    (*audioPlayer->pcmBufferQueue)->Enqueue(audioPlayer->pcmBufferQueue, fMediaFrame->data, fMediaFrame->dataLen);
-    audioPlayer->pcmQueue.pop();*/
-
-  /*   uint8_t * data = (uint8_t *)malloc(1024*2*2);
-     memset(data, 0, 1024*2*2);
-     (*audioPlayer->pcmBufferQueue)->Enqueue(audioPlayer->pcmBufferQueue, data, 1024*2*2);*/
-
-
-  /*  long t2= currentTimeStamp();
-    int gop = t2 - audioPlayer->gop;
-    audioPlayer->gop  = t2;
-    LogT<<"time : "<< t2-t1<<  " , gop : "<<gop<<endl;*/
 }
+
+
+

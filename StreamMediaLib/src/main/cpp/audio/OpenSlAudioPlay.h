@@ -23,6 +23,7 @@ namespace StreamMedia {
     namespace media {
         using x_int_queue_t = x_spsc_queue_t<MediaFrameImplPtr, 8 >;
 
+
         class AudioPlayer{
         public:
             AudioPlayer();
@@ -38,6 +39,9 @@ namespace StreamMedia {
         protected:
 
             static void pcmBufferCallBack(SLAndroidSimpleBufferQueueItf bf, void * context);
+
+            void doPutAudioData();
+            void doAudioCallback();
         protected:
             std::mutex mtx;
             bool runFlag = false;
@@ -62,14 +66,20 @@ namespace StreamMedia {
 
 //���������нӿ�
             SLAndroidSimpleBufferQueueItf pcmBufferQueue;
-
+            SLAndroidConfigurationItf playerConfig;
             FileSaver fileSaver;
 
             x_int_queue_t pcmQueue;
 
             long gop = 0;
 
+            double audioCallbackTime = NAN;
+            double audioPutTime = NAN;
 
+            MediaFrameImpl* slientMediaFramePtr;
+            MediaFrameQueuePtr internalQueuePtr;
+
+            bool onceSilent = false;
         public:
             ClockManagerPtr clockManagerPtr;
 

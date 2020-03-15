@@ -100,9 +100,9 @@ void AndroidMediaDecode::start() {
                     do{
                         mp = mediaPacketQueue->front();
                         if(mp->serial){
-                            packetSerial = mp->serial;//»ñÈ¡°üÈ¥½âÂëµÄÊ±ºò£¬½âÂëÆ÷µÄ°üÐòºÅÉèÖÃ³É°üµÄÐòºÅ
+                            packetSerial = mp->serial;//ï¿½ï¿½È¡ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ò£¬½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã³É°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                         }
-                    }while (mediaPacketQueue->serial != packetSerial);//Ö±µ½È¡³öµÄ°üÐòºÅÒ»ÖÂ
+                    }while (mediaPacketQueue->serial != packetSerial);//Ö±ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ä°ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 
                     if (mp) {
                         FFmpegMediaPacketPtr fMediaPacket = std::dynamic_pointer_cast<FFmpegMediaPacket>(mp);
@@ -152,9 +152,9 @@ void AndroidMediaDecode::start() {
                                 mediaFramePtr->pts = info.presentationTimeUs;
                                 mediaFramePtr->duration = 1/30.0;
                                 mediaFramePtr->printTimeStamp = (mediaFramePtr->pts == AV_NOPTS_VALUE) ? NAN : mediaFramePtr->pts * av_q2d(param->tb);
-                                mediaFramePtr->serial = packetSerial;//ÉèÖÃ³É½âÂëÆ÷µÄserial
-                                mediaFrameQueuePtr->push();
+                                mediaFramePtr->serial = packetSerial;//ï¿½ï¿½ï¿½Ã³É½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½serial
 //                                LogT << "decode out   video pts : "<< mediaFramePtr->printTimeStamp <<endl;
+                                mediaFrameQueuePtr->push();
 
                                 AMediaCodec_releaseOutputBuffer(mediaCodec, bufidx, false);
                                 bufidx = AMediaCodec_dequeueOutputBuffer(mediaCodec,&info,2*1000);
