@@ -11,7 +11,7 @@ AudioPlayer::~AudioPlayer() {
 }
 
 void AudioPlayer::init() {
-    LogI<<"init"<<endl;
+//    LogI<<"init"<<endl;
     //第一步，创建引擎
     SLresult result;
     result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);

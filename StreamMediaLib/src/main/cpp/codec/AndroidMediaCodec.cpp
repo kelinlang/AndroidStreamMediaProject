@@ -111,7 +111,7 @@ void AndroidMediaDecode::start() {
                         bufidx = AMediaCodec_dequeueInputBuffer(this->mediaCodec,2000);
                         if (bufidx >= 0) {
                             uint8_t* buf = AMediaCodec_getInputBuffer(mediaCodec,bufidx,&bufsize);
-//                            LogT << "decode input thread   , bufidx : "<< bufidx <<", data size : "<<fMediaPacket->getAVPacket()->size<<endl;
+//                            LogT << "decode input thread   , pts : "<< fMediaPacket->getAVPacket()->pts <<endl;
                             if(fMediaPacket->getAVPacket()->data != nullptr &&fMediaPacket->getAVPacket()->size <bufsize){
                                 memcpy(buf,fMediaPacket->getAVPacket()->data,fMediaPacket->getAVPacket()->size);
                                 AMediaCodec_queueInputBuffer(mediaCodec,bufidx,0,fMediaPacket->getAVPacket()->size,fMediaPacket->getAVPacket()->pts,0);
@@ -138,6 +138,8 @@ void AndroidMediaDecode::start() {
                                  MediaFramePtr mf = std::dynamic_pointer_cast<MediaFrame>(mediaFramePtr);
                                  callbackMediaFrame(mf);*/
 
+
+
                                 MediaFrameImpl* mediaFramePtr = mediaFrameQueuePtr->peekWriteAble();
                                 if(!mediaFramePtr->data ){
                                     mediaFramePtr->data = (uint8_t*)malloc(bufsize);
@@ -152,6 +154,7 @@ void AndroidMediaDecode::start() {
                                 mediaFramePtr->printTimeStamp = (mediaFramePtr->pts == AV_NOPTS_VALUE) ? NAN : mediaFramePtr->pts * av_q2d(param->tb);
                                 mediaFramePtr->serial = packetSerial;//设置成解码器的serial
                                 mediaFrameQueuePtr->push();
+//                                LogT << "decode out   video pts : "<< mediaFramePtr->printTimeStamp <<endl;
 
                                 AMediaCodec_releaseOutputBuffer(mediaCodec, bufidx, false);
                                 bufidx = AMediaCodec_dequeueOutputBuffer(mediaCodec,&info,2*1000);

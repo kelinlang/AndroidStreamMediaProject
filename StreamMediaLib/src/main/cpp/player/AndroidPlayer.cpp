@@ -67,7 +67,7 @@ void AndroidPlayer::init() {
             videoDisplayParamPtr->videoWidth = avCodecParameters->width;
             videoDisplayParamPtr->videoHeight = avCodecParameters->height;
             videoDisplayParamPtr->frameRate = mediaStreamPtr->getFrameRate();//帧率
-            LogI << "initDecode codec name : " << endl;
+//            LogI << "initDecode codec name : " << endl;
 
             decode->setMediaCodecParams(std::dynamic_pointer_cast<MediaCodecParams>(codecParamsPtr));
             decode->setMediaFrameCallback(mediaFrameCallback);
@@ -99,7 +99,7 @@ void AndroidPlayer::init() {
             FdkAacMediaDecodePtr decode = std::make_shared<FdkAacMediaDecode>();
             decode->conf = (uint8_t*)malloc(mediaStreamPtr->getStream()->codec->extradata_size);
             memcpy(decode->conf,mediaStreamPtr->getStream()->codec->extradata,mediaStreamPtr->getStream()->codec->extradata_size);
-            LogI << "initDecode aac decode name : " << endl;
+//            LogI << "initDecode aac decode name : " << endl;
 
             decode->tb.num = mediaStreamPtr->getStream()->time_base.num;//时间基
             decode->tb.den = mediaStreamPtr->getStream()->time_base.den;

@@ -253,6 +253,8 @@ void AndroidVideoDisplay::start() {
         }*/
 
         double remainingTime = 0.0;
+
+//        mediaFrameQueuePtr->next();
         while (runFlag) {
             if(remainingTime > 0){
                 av_usleep((int64_t)(remainingTime * 1000000.0));
@@ -261,35 +263,31 @@ void AndroidVideoDisplay::start() {
             double time;//当前系统平台的时间，单位秒
 
             if(mediaFrameQueuePtr->remainNumFrame() == 0){
-                LogT<<"no video display "<<endl;//不同序列的直接丢弃
-         /*       MediaFrameImpl* mf;
-                if(mediaFrameQueuePtr->isShown()){
-                    mf = mediaFrameQueuePtr->peek();
-                } else{
-                    LogT<<"first video display"<<endl;
-//                    av_usleep(10*1000);
-                    mf = mediaFrameQueuePtr->peekLast();
-                    mediaFrameQueuePtr->next();
-                    clockManagerPtr->refreshVideoFrameTimer();
-                }
-                glWrapper.draw(mf->data);
-                continue;*/
+//                LogT<<"no video display "<<endl;//不同序列的直接丢弃
+
             } else{
                 double lastDuration, duration, delay;
 
                 MediaFrameImpl* lastFrame = mediaFrameQueuePtr->peekLast();
                 MediaFrameImpl* curFrame = mediaFrameQueuePtr->peek();
 
-                if(curFrame->serial != clockManagerPtr->getVideoQueueSerial()){//不相等，说明curFrame还没有填入数据
-                    LogT<<"first video display"<<endl;//不同序列的直接丢弃
+              /*  if(curFrame->serial != clockManagerPtr->getVideoQueueSerial()){//不相等，说明快进了或者切换了显示流
+                    LogT<<"first video display"<<endl;//不同序列的直接丢弃，处理快进的
                     mediaFrameQueuePtr->next();//修改readIndexShown为1
                     remainingTime = 0.0;
                     continue;
+                }*/
+                if(lastFrame == curFrame){
+                    LogT<<"first video display"<<endl;
+                    glWrapper.draw(lastFrame->data);//显示当前帧
+                    mediaFrameQueuePtr->next();
+                    clockManagerPtr->refreshVideoFrameTimer();
+                    continue;
                 }
-                if(lastFrame->serial != curFrame->serial ){
+             /*   if(lastFrame->serial != curFrame->serial ){
                     LogT<<"serial is not same"<<endl;
                     clockManagerPtr->refreshVideoFrameTimer();
-                }
+                }*/
 
                 lastDuration = clockManagerPtr->videoDuration(lastFrame,curFrame);
                 delay = clockManagerPtr->computeVideoDelay(lastDuration);
@@ -326,7 +324,6 @@ void AndroidVideoDisplay::start() {
                 } else{
                     glWrapper.draw(curFrame->data);//显示当前帧
                     mediaFrameQueuePtr->next();
-                    break;
                 }
             }
         }

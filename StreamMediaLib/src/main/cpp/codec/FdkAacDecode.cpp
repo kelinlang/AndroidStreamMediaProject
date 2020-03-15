@@ -159,6 +159,8 @@ void FdkAacMediaDecode::start() {
                     mediaFramePtr->printTimeStamp = (mediaFramePtr->pts == AV_NOPTS_VALUE) ? NAN : mediaFramePtr->pts * av_q2d(tb);
                     mediaFramePtr->serial = packetSerial;
                     mediaFrameQueuePtr->push();
+//                    LogT << "decode out   audio pts : "<< mediaFramePtr->printTimeStamp <<endl;
+
                 }
             }
 //            fileSaver.close();

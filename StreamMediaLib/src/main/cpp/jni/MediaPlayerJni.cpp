@@ -46,21 +46,21 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
 
 extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_create
         (JNIEnv *env, jobject object) {
-    LogI<<"create"<<endl;
+//    LogI<<"create"<<endl;
     androidPlayPtr= std::make_shared<AndroidPlayer>();
 }
 
 
 extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_setVideoSurface
         (JNIEnv *env, jobject object, jobject surface) {
-    LogI<<"setVideoSurface"<<endl;
+//    LogI<<"setVideoSurface"<<endl;
     androidPlayPtr->videoDisplayPtr->glWrapper.aNativeWindow = ANativeWindow_fromSurface(env,surface);
 }
 
 
 extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_setParam
         (JNIEnv *env, jobject object, jobject playerParam) {
-    LogI<<"setParam"<<endl;
+//    LogI<<"setParam"<<endl;
     jclass playerParamClass = env->FindClass("com/stream/media/jni/PlayerParam");
 
     jfieldID  jviewWidth = env->GetFieldID(playerParamClass,"viewWidth","I");
@@ -82,7 +82,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_setPa
     int videoHeight = env->GetIntField(playerParam,jvideoHeight);
 
 //    jstring url = (jstring)env->GetObjectField(playerParam, jUrl);
-    LogI<<"GetObjectField"<<endl;
+//    LogI<<"GetObjectField"<<endl;
 //    char * urlString = (char*)env->GetStringUTFChars(url , NULL);
 
     jfloatArray  dataArray = (jfloatArray)env->GetObjectField(playerParam,jMatrix);
@@ -115,27 +115,27 @@ extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_setPa
 
 extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_init
         (JNIEnv *env, jobject object) {
-    LogI<<"----init-----"<<endl;
+//    LogI<<"----init-----"<<endl;
     androidPlayPtr->init();
 }
 
 
 extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_release
         (JNIEnv *env, jobject object) {
-    LogI<<"----release-----"<<endl;
+//    LogI<<"----release-----"<<endl;
     androidPlayPtr->release();
 }
 
 
 extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_start
         (JNIEnv *env, jobject object) {
-    LogI<<"----start-----"<<endl;
+//    LogI<<"----start-----"<<endl;
     androidPlayPtr->start();
 }
 
 
 extern "C" JNIEXPORT void JNICALL Java_com_stream_media_jni_MediaPlayerJni_stop
         (JNIEnv *env, jobject object) {
-    LogI<<"----stop-----"<<endl;
+//    LogI<<"----stop-----"<<endl;
     androidPlayPtr->stop();
 }
