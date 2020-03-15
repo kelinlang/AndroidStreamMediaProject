@@ -158,6 +158,9 @@ void AudioPlayer::doPutAudioData() {
         mediaFrameQueuePtr->next();
         internalQueuePtr->push(curFrame);
         audioPutTime = av_gettime_relative() / 1000000.0;
+        clockManagerPtr->syncAudioTime(curFrame);
+
+        clockManagerPtr->audioPts =av_gettime_relative() / 1000000.0;
     } else{
         LogT<<"audioPlay play slient 2"<<endl;
         internalQueuePtr->push(slientMediaFramePtr);//继续播放静音包
@@ -184,18 +187,18 @@ void AudioPlayer::doAudioCallback() {
     }
     internalQueuePtr->pop();
     if(!playedMediaFramePtr->silentFlag){
-        LogT<<"audioPlay gop : "<< (audioCallbackTime-audioPutTime)*1000<<" ms"<<endl;
-        clockManagerPtr->syncAudioTime(playedMediaFramePtr);
+//        LogT<<"audioPlay gop : "<< (audioCallbackTime-audioPutTime)*1000<<" ms"<<endl;
+//        clockManagerPtr->syncAudioTime(playedMediaFramePtr);
     }
 
     if( !onceSilent){
         if(mediaFrameQueuePtr->getSize() < PLAY_KICKSTART_BUFFER_COUNT){
             (*pcmBufferQueue)->Enqueue(pcmBufferQueue, slientMediaFramePtr->data, slientMediaFramePtr->dataLen);
             internalQueuePtr->push(slientMediaFramePtr);//继续播放静音包
-            LogT<<"audioPlay play slient  1"<<endl;
+//            LogT<<"audioPlay play slient  1"<<endl;
             return;
         } else{
-            LogT<<"audioPlay play input  3"<<endl;
+//            LogT<<"audioPlay play input  3"<<endl;
             for (int32_t idx = 0; idx < PLAY_KICKSTART_BUFFER_COUNT; idx++) {//取PLAY_KICKSTART_BUFFER_COUNT数量的buf放入播放器播放
                 doPutAudioData();
             }

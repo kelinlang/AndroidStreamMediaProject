@@ -53,6 +53,8 @@ namespace StreamMedia {
             void start();
             void stop();
 
+        protected:
+
         public:
             AMediaCodec* mediaCodec;
 
@@ -60,6 +62,11 @@ namespace StreamMedia {
 
             MediaFrameQueuePtr mediaFrameQueuePtr;
             ClockManagerPtr clockManagerPtr;
+
+        protected:
+            ssize_t bufidx = -1;
+            size_t bufsize;
+            AMediaCodecBufferInfo info;
         };
         using AndroidMediaDecodePtr = std::shared_ptr<AndroidMediaDecode>;
     }

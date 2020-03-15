@@ -152,11 +152,22 @@ namespace StreamMedia {
             void start();
             void stop();
 
+        protected:
+            void draw();
+            void draw2();
         public:
             GlWrapper glWrapper;
             ClockManagerPtr clockManagerPtr;
 
             MediaFrameQueuePtr mediaFrameQueuePtr;
+
+        protected:
+            double remainingTime = 0.0;
+            double curDrawTime = 0.0;
+            double  lastDrawTime = NAN;
+            double  drawGopTime = 0;
+            double  audioVideoDiffTime = 0;
+            double ptsDrift;
         };
         using AndroidVideoDisplayPtr = std::shared_ptr<AndroidVideoDisplay>;
 
