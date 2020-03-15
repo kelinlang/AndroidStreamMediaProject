@@ -282,6 +282,7 @@ void AndroidVideoDisplay::start() {
                     glWrapper.draw(lastFrame->data);//ÏÔÊ¾µ±Ç°Ö¡
                     mediaFrameQueuePtr->next();
                     clockManagerPtr->refreshVideoFrameTimer();
+                    clockManagerPtr->syncVideoTime(curFrame);
                     continue;
                 }
              /*   if(lastFrame->serial != curFrame->serial ){
