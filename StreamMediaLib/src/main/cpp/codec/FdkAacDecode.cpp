@@ -87,15 +87,21 @@ void FdkAacMediaDecode::start() {
             AAC_DECODER_ERROR err;
             while (runFlag)
             {
-                MediaPacketPtr mp = mediaPacketQueue->front();
+                MediaPacketPtr mp = nullptr;
+                do{
+                    mp = mediaPacketQueue->front();
+                    if(mp->serial){
+                        packetSerial = mp->serial;//获取包去解码的时候，解码器的包序号设置成包的序号
+                    }
+                }while (mediaPacketQueue->serial != packetSerial);//直到取出的包序号一致
+
                 if (mp) {
                     FFmpegMediaPacketPtr fMediaPacket = std::dynamic_pointer_cast<FFmpegMediaPacket>(mp);
-
-                    if(fMediaPacket->serial){
-                        clockManagerPtr->setVideoQueueSerial(packetSerial);
+                    if(fMediaPacket->getAVPacket()->data != nullptr){
+                        LogT<<"audio refresh packet or finish packet"<<endl;
+                        continue;
                     }
-
-                    unsigned int confLen[] = {(unsigned int)fMediaPacket->getAVPacket()->size};
+                        unsigned int confLen[] = {(unsigned int)fMediaPacket->getAVPacket()->size};
                     unsigned int validSize = fMediaPacket->getAVPacket()->size;
                     err=aacDecoder_Fill(handle, &fMediaPacket->getAVPacket()->data, confLen, &validSize);
                     if(err>0){
@@ -150,7 +156,7 @@ void FdkAacMediaDecode::start() {
                     mediaFramePtr->pts = fMediaPacket->getAVPacket()->pts;
                     mediaFramePtr->duration =av_q2d((AVRational){info->frameSize, 48000});
                     mediaFramePtr->printTimeStamp = (mediaFramePtr->pts == AV_NOPTS_VALUE) ? NAN : mediaFramePtr->pts * av_q2d(tb);
-                    mediaFramePtr->serial = clockManagerPtr->getVideoQueueSerial();
+                    mediaFramePtr->serial = packetSerial;
                     mediaFrameQueuePtr->push();
                 }
             }

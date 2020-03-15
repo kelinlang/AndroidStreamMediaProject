@@ -96,40 +96,47 @@ void AndroidMediaDecode::start() {
                 LogI<<"workThreadFunc loop start "<<endl;
                 while (runFlag)
                 {
-                    MediaPacketPtr mp = mediaPacketQueue->front();
+                    MediaPacketPtr mp = nullptr;
+                    do{
+                        mp = mediaPacketQueue->front();
+                        if(mp->serial){
+                            packetSerial = mp->serial;//获取包去解码的时候，解码器的包序号设置成包的序号
+                        }
+                    }while (mediaPacketQueue->serial != packetSerial);//直到取出的包序号一致
+
                     if (mp) {
                         FFmpegMediaPacketPtr fMediaPacket = std::dynamic_pointer_cast<FFmpegMediaPacket>(mp);
-                        if(fMediaPacket->serial){
-                            packetSerial = fMediaPacket->serial;
-                            clockManagerPtr->setVideoQueueSerial(packetSerial);
-                        }
 
                         AndroidMediaCodecParamsPtr param = std::dynamic_pointer_cast<AndroidMediaCodecParams>(codecParams);
                         bufidx = AMediaCodec_dequeueInputBuffer(this->mediaCodec,2000);
                         if (bufidx >= 0) {
                             uint8_t* buf = AMediaCodec_getInputBuffer(mediaCodec,bufidx,&bufsize);
 //                            LogT << "decode input thread   , bufidx : "<< bufidx <<", data size : "<<fMediaPacket->getAVPacket()->size<<endl;
+                            if(fMediaPacket->getAVPacket()->data != nullptr &&fMediaPacket->getAVPacket()->size <bufsize){
+                                memcpy(buf,fMediaPacket->getAVPacket()->data,fMediaPacket->getAVPacket()->size);
+                                AMediaCodec_queueInputBuffer(mediaCodec,bufidx,0,fMediaPacket->getAVPacket()->size,fMediaPacket->getAVPacket()->pts,0);
+                            } else{
+                                LogT<<"video refresh packet or finish packet"<<endl;
+                            }
+                        }
 
-                            memcpy(buf,fMediaPacket->getAVPacket()->data,fMediaPacket->getAVPacket()->size);
-                            AMediaCodec_queueInputBuffer(mediaCodec,bufidx,0,fMediaPacket->getAVPacket()->size,fMediaPacket->getAVPacket()->pts,0);
-
-
+                        if(mediaPacketQueue->serial == packetSerial){
                             bufidx = AMediaCodec_dequeueOutputBuffer(mediaCodec,&info,2*1000);
                             while (bufidx >= 0){
                                 uint8_t *buf = AMediaCodec_getOutputBuffer(mediaCodec, bufidx, &bufsize);
 
-                               /* uint8_t *data =  (uint8_t*)malloc(bufsize);
-                                memcpy(data,buf,bufsize);
-                                MediaFrameImplPtr mediaFramePtr = std::make_shared<MediaFrameImpl>();
-                                mediaFramePtr->sourceIndex = getSourceIndex();
-                                mediaFramePtr->streamIndex = getStreamIndex();
-                                mediaFramePtr->data = data;
-                                mediaFramePtr->startPos = 0;
-                                mediaFramePtr->dataLen = bufsize;
-                                mediaFramePtr->pts = info.presentationTimeUs;
+                                /* uint8_t *data =  (uint8_t*)malloc(bufsize);
+                                 memcpy(data,buf,bufsize);
+                                 MediaFrameImplPtr mediaFramePtr = std::make_shared<MediaFrameImpl>();
+                                 mediaFramePtr->sourceIndex = getSourceIndex();
+                                 mediaFramePtr->streamIndex = getStreamIndex();
+                                 mediaFramePtr->data = data;
+                                 mediaFramePtr->startPos = 0;
+                                 mediaFramePtr->dataLen = bufsize;
+                                 mediaFramePtr->pts = info.presentationTimeUs;
 
-                                MediaFramePtr mf = std::dynamic_pointer_cast<MediaFrame>(mediaFramePtr);
-                                callbackMediaFrame(mf);*/
+                                 MediaFramePtr mf = std::dynamic_pointer_cast<MediaFrame>(mediaFramePtr);
+                                 callbackMediaFrame(mf);*/
 
                                 MediaFrameImpl* mediaFramePtr = mediaFrameQueuePtr->peekWriteAble();
                                 if(!mediaFramePtr->data ){
@@ -143,7 +150,7 @@ void AndroidMediaDecode::start() {
                                 mediaFramePtr->pts = info.presentationTimeUs;
                                 mediaFramePtr->duration = 1/30.0;
                                 mediaFramePtr->printTimeStamp = (mediaFramePtr->pts == AV_NOPTS_VALUE) ? NAN : mediaFramePtr->pts * av_q2d(param->tb);
-                                mediaFramePtr->serial = clockManagerPtr->getVideoQueueSerial();
+                                mediaFramePtr->serial = packetSerial;//设置成解码器的serial
                                 mediaFrameQueuePtr->push();
 
                                 AMediaCodec_releaseOutputBuffer(mediaCodec, bufidx, false);

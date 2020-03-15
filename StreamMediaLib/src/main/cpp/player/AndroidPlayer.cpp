@@ -23,12 +23,15 @@ void AndroidPlayer::init() {
         LogE<<"videoDisplayParamPtr is null"<<endl;
         return;
     }
+    audioPacketQueuePtr = std::make_shared<MediaPacketQueue>();
+    videoPacketQueuePtr = std::make_shared<MediaPacketQueue>();
+    clockManagerPtr->setAudioQueueSerial(&audioPacketQueuePtr->serial);
+    clockManagerPtr->setVideoQueueSerial(&videoPacketQueuePtr->serial);
     clockManagerPtr->init();
     audioPlayerPtr->clockManagerPtr = clockManagerPtr;
     videoDisplayPtr->clockManagerPtr = clockManagerPtr;
 
-    audioPacketQueuePtr = std::make_shared<MediaPacketQueue>();
-    videoPacketQueuePtr = std::make_shared<MediaPacketQueue>();
+
 
     mediaSourePtr->videoPacketQueuePtr = videoPacketQueuePtr;
     mediaSourePtr->audioPacketQueuePtr = audioPacketQueuePtr;
